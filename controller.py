@@ -1,5 +1,6 @@
 from flask import Flask, send_file
 import psycopg2
+import random
 
 app = Flask(__name__)
 
@@ -16,17 +17,15 @@ def getStyle():
 def getImage():
     return send_file("Images/cat.png", mimetype="image/png")
 
-@app.route("/getNotes")
+@app.route("/changeImage")
 def getNotes():
     connection = psycopg2.connect(user="root", password="root", host="localhost", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
-    cursor.execute("select * from test")
-    counter = cursor.fetchone()[0]
-    cursor.execute("delete from test")
-    cursor.execute("insert into test values ('{}')".format(int(counter) + 1))
-    connection.commit()
-    cursor.execute("select * from test")
-    return cursor.fetchone()[0]
+    cursor.execute("select count(id) from urls;")
+    count = cursor.fetchone()[0]
+    randid = random.randrange(0,count+1)
+    cursor.execute("select * from urls where id = {};".format(randid))
+    return cursor.fetchone()[1]
 
 @app.route("/Javascript/opening-page.js")
 def opening_page_js():
