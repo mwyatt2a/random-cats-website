@@ -6,16 +6,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def opening_page_hmtl():
-    html = open("HTML/opening-page.html")
-    return html.read()
+    return send_file("HTML/opening-page.html", mimetype="text/html")
 
 @app.route("/CSS/style.css")
 def getStyle():
     return send_file("CSS/style.css", mimetype="text/css")
-
-@app.route("/Images/cat.png")
-def getImage():
-    return send_file("Images/cat.png", mimetype="image/png")
 
 @app.route("/changeImage")
 def getNotes():
@@ -29,5 +24,4 @@ def getNotes():
 
 @app.route("/Javascript/opening-page.js")
 def opening_page_js():
-    js = open("Javascript/opening-page.js")
-    return js.read()
+    return send_file("Javascript/opening-page.js", mimetype="text/javascript")

@@ -4,3 +4,4 @@ function change() {
         document.getElementById("source").href = result;
         });
 }
+change();
