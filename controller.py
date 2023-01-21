@@ -1,4 +1,4 @@
-from flask import Flask, send_file, request
+from flask import Flask, send_file, request, jsonify, Response
 import psycopg2
 import random
 import subprocess
@@ -24,13 +24,14 @@ def newImage():
     cursor.execute("select count(id) from urls;")
     count = cursor.fetchone()[0]
     randid = random.randrange(1,count+1)
-    cursor.execute("select * from urls where id >= {};".format(randid))
+    cursor.execute("select * from urls where id >= {} limit 1;".format(randid))
     row = cursor.fetchone()
     url = row[1]
+    views = row[3]
     cursor.execute("update urls set views = views + 1 where id = {};".format(row[0]))
     connection.commit()
     connection.close()
-    return url
+    return jsonify({"url": url, "views": views + 1})
 
 @app.route("/Javascript/opening-page.js")
 def opening_page_js():
@@ -62,3 +63,13 @@ def addURL():
     connection.close()
     return "success"
    
+@app.route("/bad", methods=["POST"])
+def badURL():
+    url = request.data.decode("UTF-8")
+    connection = psycopg2.connect(user="root", password="root", host="localhost", port="5432", dbname="flaskdata")
+    cursor = connection.cursor()
+    cursor.execute("update urls set reports = reports + 1 where url = '{}'".format(url))
+    cursor.execute("delete from urls where url = '{}' and cast(reports as double precision)/views >= 0.01".format(url))
+    connection.commit()
+    connection.close()
+    return Response(status=204)

@@ -1,7 +1,8 @@
 function change() {
-    fetch("/changeImage").then(data => data.text()).then(result => {
-        document.getElementById("cat").src = result;
-        document.getElementById("source").href = result;
+    fetch("/changeImage").then(data => data.json()).then(result => {
+        document.getElementById("cat").src = result.url;
+        document.getElementById("source").href = result.url;
+        document.getElementById("viewsContent").innerHTML = result.views;
     });
     
 }
@@ -24,6 +25,12 @@ function add() {
     });
 }
 
-
+function bad() {
+    url = document.getElementById("source").href;
+    fetch("/bad", {method: "POST", body: url}).then((response) => {
+        alert("Report Recieved!\n\nIf the ratio of reports to views exceeds a certain value, the image will be removed.");
+        change();
+    });
+}
 
 change();
