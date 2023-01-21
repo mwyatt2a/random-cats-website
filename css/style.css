@@ -1,0 +1,49 @@
+html {
+    background-color: black;
+}
+body {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #3fe8e5;
+    font-family: "brush script m7", cursive;
+    text-align: center;
+    border: 5px solid orange;
+}
+h1 {
+    margin: 0;
+    padding: 20px;
+    font-size: 96px;
+    text-shadow: 3px 3px 1px orange;
+}
+a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid black;
+    padding: 5px;
+    margin: 5px;
+    font-size: 24px;
+    background-color: orange;
+}
+a:hover {
+    background-color: grey;
+}
+button {
+    font-family: "brush script m7", cursive;
+    font-weight: bold;
+    border: 1px solid black;
+    padding: 5px;
+    margin: 5px;
+    font-size: 24px;
+    background-color: orange;
+}
+button:hover {
+    background-color: grey;
+}
+li {
+    display: inline;
+}
+#views {
+    font-weight: bold;
+}
