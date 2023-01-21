@@ -7,17 +7,17 @@ app = Flask(__name__)
 
 @app.route("/")
 def opening_page_hmtl():
-    return send_file("HTML/opening-page.html", mimetype="text/html")
+    return send_file("html/page.html", mimetype="text/html")
 
 @app.route("/images/favicon.ico")
 def getFavicon():
-    return send_file("Images/favicon.ico", mimetype="image/x-icon")
+    return send_file("images/favicon.ico", mimetype="image/x-icon")
 
-@app.route("/CSS/style.css")
+@app.route("/css/style.css")
 def getStyle():
-    return send_file("CSS/style.css", mimetype="text/css")
+    return send_file("css/style.css", mimetype="text/css")
 
-@app.route("/changeImage")
+@app.route("/changeimage")
 def newImage():
     connection = psycopg2.connect(user="root", password="root", host="localhost", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
@@ -27,15 +27,15 @@ def newImage():
     cursor.execute("select * from urls where id >= {} limit 1;".format(randid))
     row = cursor.fetchone()
     url = row[1]
-    views = row[3]
+    views = row[2]
     cursor.execute("update urls set views = views + 1 where id = {};".format(row[0]))
     connection.commit()
     connection.close()
     return jsonify({"url": url, "views": views + 1})
 
-@app.route("/Javascript/opening-page.js")
+@app.route("/javascript/page.js")
 def opening_page_js():
-    return send_file("Javascript/opening-page.js", mimetype="text/javascript")
+    return send_file("javascript/opening-page.js", mimetype="text/javascript")
 
 @app.route("/add", methods=["GET"])
 def addURL():
