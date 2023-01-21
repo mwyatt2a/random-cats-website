@@ -3,10 +3,14 @@ function change() {
         document.getElementById("cat").src = result;
         document.getElementById("source").href = result;
     });
+    
 }
 change();
 function add() {
     let url = prompt("Enter the url of the new image");
+    if (url === null) {
+        return
+    }
     fetch("/add?url=" + url).then((response) => response.text()).then((text) => {
         if (text === "success") {
             alert("Image Added Successfully!");
@@ -15,7 +19,7 @@ function add() {
             alert("That URL Was Already Added");
         }
         else {
-            alert("Something Went Wrong :( " + text);
+            alert("Something Went Wrong :( , " + text);
         }
     });
 }
