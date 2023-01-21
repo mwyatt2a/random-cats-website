@@ -25,9 +25,13 @@ def newImage():
     count = cursor.fetchone()[0]
     randid = random.randrange(1,count+1)
     cursor.execute("select * from urls where id >= {};".format(randid))
-    url = cursor.fetchone()[1]
+    row = cursor.fetchone()
+    url = row[1]
+    cursor.execute("update urls set views = views + 1 where id = {};".format(row[0]))
+    connection.commit()
     connection.close()
     return url
+
 @app.route("/Javascript/opening-page.js")
 def opening_page_js():
     return send_file("Javascript/opening-page.js", mimetype="text/javascript")
@@ -42,13 +46,14 @@ def addURL():
         subprocess.call("file /tmp/download:" + generated + "| grep -ic 'apng/|avif\|gif\|jpeg\|png\|svg\|webp\|bmp\|ico\|tiff' > /tmp/count:" + generated, timeout=10, shell=True)
         file = open("/tmp/count:" + generated, "r");
         result = int(file.read())
+        subprocess.call("rm /tmp/download:" + generated + " /tmp/count:" + generated, timeout=10, shell=True)
     except:
         return "timeout"
     if result == 0:
         return "bad url"
     connection = psycopg2.connect(user="root", password="root", host="localhost", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
-    cursor.execute("select count(id) from urls where url = '{}'".format(url))
+    cursor.execute("select count(id) from urls where url = '{}';".format(url))
     duplicate = cursor.fetchone()[0]
     if duplicate != 0:
         return "duplicate"

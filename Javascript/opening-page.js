@@ -5,7 +5,7 @@ function change() {
     });
     
 }
-change();
+
 function add() {
     let url = prompt("Enter the url of the new image");
     if (url === null) {
@@ -23,3 +23,7 @@ function add() {
         }
     });
 }
+
+
+
+change();
