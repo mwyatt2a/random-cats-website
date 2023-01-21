@@ -35,7 +35,7 @@ def newImage():
 
 @app.route("/javascript/page.js")
 def opening_page_js():
-    return send_file("javascript/opening-page.js", mimetype="text/javascript")
+    return send_file("javascript/page.js", mimetype="text/javascript")
 
 @app.route("/add", methods=["GET"])
 def addURL():
