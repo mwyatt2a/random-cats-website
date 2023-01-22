@@ -8,3 +8,5 @@ insert into urls (url, views, reports) values ('https://encrypted-tbn0.gstatic.c
 insert into urls (url, views, reports) values ('https://static.boredpanda.com/blog/wp-content/uploads/2021/06/60dc8245800b0_9em1l7ht7z671__700.jpg', 0, 0);
 insert into urls (url, views, reports) values ('https://media.tenor.com/9SRPROM5RAcAAAAM/kitten-kitty.gif', 0, 0);
 insert into urls (url, views, reports) values ('https://i.chzbgr.com/thumb800/18809861/h0B968430/15-criminally-cute-cat-convicts-to-start-off-your-week-with-some-serotonin', 0, 0);
+insert into urls (url, views, reports) values ('https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/cute-photos-of-cats-cuddling-1593203046.jpg', 0, 0);
+insert into urls (url, views, reports) values ('https://i.cbc.ca/1.5777583.1603813765!/fileImage/httpImage/dusty-dusty-1-jpg.jpg', 0, 0);
