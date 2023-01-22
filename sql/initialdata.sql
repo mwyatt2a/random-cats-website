@@ -3,3 +3,8 @@ insert into urls (url, views, reports) values ('https://www.rd.com/wp-content/up
 insert into urls (url, views, reports) values ('https://i.pinimg.com/originals/de/9f/18/de9f180a62deadfcd8197dc66b52205e.jpg', 0, 0);
 insert into urls (url, views, reports) values ('https://www.pngall.com/wp-content/uploads/2016/03/Cat-PNG-2.png', 0, 0);
 insert into urls (url, views, reports) values ('https://media.tenor.com/uvKuFfA9T-IAAAAC/kitten-meowing.gif', 0, 0);
+insert into urls (url, views, reports) values ('https://static.inspiremore.com/wp-content/uploads/2022/03/17141034/cute-cats-featured-image.jpg', 0, 0);
+insert into urls (url, views, reports) values ('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS-LQIYzzr4jGoLDtWxOreyEtUiYl60_8P7w&usqp=CAU', 0, 0);
+insert into urls (url, views, reports) values ('https://static.boredpanda.com/blog/wp-content/uploads/2021/06/60dc8245800b0_9em1l7ht7z671__700.jpg', 0, 0);
+insert into urls (url, views, reports) values ('https://media.tenor.com/9SRPROM5RAcAAAAM/kitten-kitty.gif', 0, 0);
+insert into urls (url, views, reports) values ('https://i.chzbgr.com/thumb800/18809861/h0B968430/15-criminally-cute-cat-convicts-to-start-off-your-week-with-some-serotonin', 0, 0);
