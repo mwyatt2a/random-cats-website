@@ -26,11 +26,13 @@ function add() {
 }
 
 function bad() {
-    url = document.getElementById("source").href;
-    fetch("/bad", {method: "POST", body: url}).then((response) => {
-        alert("Report Recieved!\n\nIf the ratio of reports to views exceeds a certain value, the image will be removed.");
-        change();
-    });
+    if (confirm("Report Image For Potential Removal?") {
+        url = document.getElementById("source").href;
+        fetch("/bad", {method: "POST", body: url}).then((response) => {
+            alert("Report Recieved!\n\nIf the ratio of reports to views exceeds a certain value, the image will be removed.");
+            change();
+        });
+    }
 }
 
 change();

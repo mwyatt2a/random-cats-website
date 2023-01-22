@@ -24,7 +24,7 @@ def newImage():
     cursor.execute("select count(id) from urls;")
     count = cursor.fetchone()[0]
     randid = random.randrange(1,count+1)
-    cursor.execute("select * from urls where id >= {} limit 1;".format(randid))
+    cursor.execute("select * from urls where id >= {} order by id limit 1;".format(randid))
     row = cursor.fetchone()
     url = row[1]
     views = row[2]

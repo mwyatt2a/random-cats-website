@@ -17,18 +17,18 @@
         <article id="article">
             <p>Click the cat for a new one</p>
             <p id="views">Views: <span id="viewsContent"></span></p>
-            <img id="cat" onclick="change()" width="800" height="500" src="" alt="A cute cat" />
+            <img title="Changes the picture to a random new one." id="cat" onclick="change()" width="800" height="500" src="" alt="A cute cat" />
         </article>
         </section>
             <ul>
                 <li>
-                    <button onclick="add()">Add Image</button>
+                    <button title="Allows the user to add an image by providing a url to an image." onclick="add()">Add Image</button>
                 </li>
                 <li>
-                    <a id="source" href="" target="_blank">Image Source</a>
+                    <a title="A link to the source of the image that opens in a new tab." id="source" href="" target="_blank">Image Source</a>
                 </li>
                 <li>
-                    <button onclick="bad()">Bad Image?</button>
+                    <button title="Sends A Report To The Server. A high ratio of reports/views removes the image." onclick="bad()">Report Non-Cat Image</button>
                 </li>
             </ul>
         </section>
