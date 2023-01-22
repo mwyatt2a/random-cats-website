@@ -19,7 +19,7 @@ def getStyle():
 
 @app.route("/changeimage")
 def newImage():
-    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="postgres://root:VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq@dpg-cf6e7e9mbjsmchenr54g-a/flaskdata", port="5432", dbname="flaskdata")
+    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="dpg-cf6e7e9mbjsmchenr54g-a.ohio-postgres.render.com", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
     cursor.execute("select count(id) from urls;")
     count = cursor.fetchone()[0]
@@ -52,7 +52,7 @@ def addURL():
         return "timeout"
     if result == 0:
         return "bad url"
-    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="postgres://root:VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq@dpg-cf6e7e9mbjsmchenr54g-a/flaskdata", port="5432", dbname="flaskdata")
+    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="dpg-cf6e7e9mbjsmchenr54g-a.ohio-postgres.render.com", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
     cursor.execute("select count(id) from urls where url = '{}';".format(url))
     duplicate = cursor.fetchone()[0]
@@ -66,7 +66,7 @@ def addURL():
 @app.route("/bad", methods=["POST"])
 def badURL():
     url = request.data.decode("UTF-8")
-    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="postgres://root:VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq@dpg-cf6e7e9mbjsmchenr54g-a/flaskdata", port="5432", dbname="flaskdata")
+    connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="dpg-cf6e7e9mbjsmchenr54g-a.ohio-postgres.render.com", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
     cursor.execute("update urls set reports = reports + 1 where url = '{}'".format(url))
     cursor.execute("delete from urls where url = '{}' and cast(reports as double precision)/views >= 0.01".format(url))
