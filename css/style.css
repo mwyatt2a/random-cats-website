@@ -47,3 +47,8 @@ li {
 #views {
     font-weight: bold;
 }
+#cat {
+    width: 90%;
+    border: 5px solid brown;
+    border-radius: 5px;
+}
