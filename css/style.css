@@ -5,8 +5,8 @@ body {
     width: 90%;
     margin: 0 auto;
     padding: 20px;
-    background-color: #3fe8e5;
-    font-family: "brush script m7", cursive;
+    background-image: linear-gradient(rgba(255, 0, 255, 1), rgba(255, 0, 255, 0));
+    font-family: "trebuchet ms", sans-serif;
     text-align: center;
     border: 5px solid orange;
 }
@@ -30,7 +30,7 @@ a:hover {
     background-color: grey;
 }
 button {
-    font-family: "brush script m7", cursive;
+    font-family: "trebuchet ms", sans-serif;
     font-weight: bold;
     border: 1px solid black;
     padding: 5px;
@@ -49,6 +49,9 @@ li {
 }
 #cat {
     width: 90%;
-    border: 5px solid brown;
+    border: 12px solid brown;
     border-radius: 5px;
+}
+#welcome {
+    font-size: 54px;
 }
