@@ -30,6 +30,7 @@ a:hover {
     background-color: grey;
 }
 button {
+    color: black;
     font-family: "trebuchet ms", sans-serif;
     font-weight: bold;
     border: 1px solid black;
