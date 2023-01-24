@@ -14,7 +14,7 @@ h1 {
     margin: 0;
     padding: 20px;
     font-size: 96px;
-    text-shadow: 3px 3px 1px orange, text-shadow: 3px 3px 1px orange;
+    text-shadow: 3px 3px 1px orange, 3px 3px 1px orange, 4px 4px 2px orange;
 }
 a {
     color: black;
@@ -54,6 +54,6 @@ li {
     border-radius: 5px;
 }
 #welcome {
-    text-shadow: 2px 2px 1px orange, 2px 2px 1px orange;
+    text-shadow: 2px 2px 1px orange, 2px 2px 1px orange, 3px 3px 2px orange;
     font-size: 54px;
 }
