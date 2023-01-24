@@ -1,8 +1,16 @@
 function change() {
-    fetch("/changeimage").then(data => data.json()).then(result => {
+    document.getElementById("meow").play();
+    let query = "?seen=" + seen[0];
+    for (let i = 1; i < 10; i++) {
+        query += "&seen=" + seen[i];
+    } 
+    fetch("/changeimage" + query).then(data => data.json()).then(result => {
         document.getElementById("cat").src = result.url;
         document.getElementById("source").href = result.url;
         document.getElementById("viewsContent").innerHTML = result.views;
+        seen[oldest] = result.id;
+        newest = oldest;
+        oldest = (oldest + 1) % 10;
     });
     
 }
@@ -35,4 +43,7 @@ function bad() {
     }
 }
 
+let seen = [0,0,0,0,0,0,0,0,0,0];
+let newest = 9;
+let oldest = 0;
 change();
