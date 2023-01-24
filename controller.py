@@ -21,9 +21,9 @@ def getStyle():
 def newImage():
     connection = psycopg2.connect(user="root", password="VBh9vIXCqaMNOFdb2E3T7PxEXAiHDpmq", host="dpg-cf6e7e9mbjsmchenr54g-a.ohio-postgres.render.com", port="5432", dbname="flaskdata")
     cursor = connection.cursor()
-    cursor.execute("select count(id) from urls;")
-    count = cursor.fetchone()[0]
-    randid = random.randrange(1,count+1)
+    cursor.execute("select max(id) from urls;")
+    maxid = cursor.fetchone()[0]
+    randid = random.randrange(1,maxid+1)
     cursor.execute("select * from urls where id >= {} order by id limit 1;".format(randid))
     row = cursor.fetchone()
     url = row[1]
