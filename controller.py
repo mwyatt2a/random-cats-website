@@ -19,7 +19,7 @@ def getStyle():
 
 @app.route("/resources/meow")
 def getMp3():
-    randfile = str(random.randrange(0,15))
+    randfile = str(random.randrange(0,14))
     print(randfile)
     return send_file("resources/meow" + randfile + ".mp3", mimetype="audio/mpeg")
 

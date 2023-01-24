@@ -1,5 +1,7 @@
 function change() {
-    document.getElementById("meow").play();
+    meow = document.getElementById("meow");
+    meow.src = "/resources/meow";
+    meow.play();
     let query = "?seen=" + seen[0];
     for (let i = 1; i < 10; i++) {
         query += "&seen=" + seen[i];
