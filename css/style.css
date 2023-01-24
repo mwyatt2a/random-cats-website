@@ -5,7 +5,7 @@ body {
     width: 90%;
     margin: 0 auto;
     padding: 20px;
-    background-image: linear-gradient(rgba(255, 0, 255, 1), rgba(255, 0, 255, 0));
+    background-image: linear-gradient(rgba(230, 227, 211, 1), rgba(230, 227, 211, 0.8));
     font-family: "trebuchet ms", sans-serif;
     text-align: center;
     border: 5px solid orange;
