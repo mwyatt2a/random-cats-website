@@ -17,9 +17,11 @@ def getFavicon():
 def getStyle():
     return send_file("css/style.css", mimetype="text/css")
 
-@app.route("/resources/meow.mp3")
+@app.route("/resources/meow")
 def getMp3():
-    return send_file("resources/meow.mp3", mimetype="audio/mpeg")
+    randfile = str(random.randrange(0,15))
+    print(randfile)
+    return send_file("resources/meow" + randfile + ".mp3", mimetype="audio/mpeg")
 
 @app.route("/changeimage")
 def newImage():
@@ -31,11 +33,9 @@ def newImage():
     randid = random.randrange(1,maxid+1)
     cursor.execute("select * from urls where id >= {} and id not in ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}) order by id limit 1;".format(randid, seen[0], seen[1], seen[2], seen[3], seen[4], seen[5], seen[6], seen[7], seen[8], seen[9]))
     row = cursor.fetchone()
-    print("select * from urls where id >= {} and id not in ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}) order by id limit 1;".format(randid, seen[0], seen[1], seen[2], seen[3], seen[4], seen[5], seen[6], seen[7], seen[8], seen[9]))
     if row == None:
         cursor.execute("select * from urls where id < {} and id not in ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}) order by id desc limit 1;".format(randid, seen[0], seen[1], seen[2], seen[3], seen[4], seen[5], seen[6], seen[7], seen[8], seen[9]))
         row = cursor.fetchone()
-        print("select * from urls where id < {} and id not in ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}) order by id desc limit 1;".format(randid, seen[0], seen[1], seen[2], seen[3], seen[4], seen[5], seen[6], seen[7], seen[8], seen[9]))
     catid = row[0]
     url = row[1]
     views = row[2]
