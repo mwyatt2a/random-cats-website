@@ -48,6 +48,9 @@ const normalize = false;
 const stride = 0;
 const offset = 0;
 gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
  
 function render() {
     gl.useProgram(program);
