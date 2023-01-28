@@ -57,3 +57,9 @@ li {
     text-shadow: 2px 2px 1px orange, 2px 2px 1px orange, 3px 3px 2px orange;
     font-size: 54px;
 }
+#webgl {
+    width: 90%;
+    height: 90%;
+    border: 12px solid #2F4F4F;
+    border-radius: 5px;
+}

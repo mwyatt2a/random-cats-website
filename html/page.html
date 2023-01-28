@@ -14,24 +14,26 @@
         <header>
             <h1><span id="welcome">Welcome to</span><br>RANDOM CATS</h1>
         </header>
-        <article id="article">
-            <p>Click the cat for a new one</p>
-            <p id="views">Views: <span id="viewsContent"></span></p>
-            <audio id="meow" src=""></audio>
-            <img title="Changes the picture to a random new one." id="cat" onclick="change()" src="" alt="A cute cat" />
-        </article>
-        </section>
-            <ul>
-                <li>
-                    <button title="Allows the user to add an image by providing a url to an image." onclick="add()">Add Image</button>
-                </li>
-                <li>
-                    <a title="A link to the source of the image that opens in a new tab." id="source" href="" target="_blank">Image Source</a>
-                </li>
-                <li>
-                    <button title="Sends A Report To The Server. A high ratio of reports/views removes the image." onclick="bad()">Report Non-Cat Image</button>
-                </li>
-            </ul>
-        </section>
+        <main>
+            <article id="article">
+                <p>Click the cat for a new one</p>
+                <p id="views">Views: <span id="viewsContent"></span></p>
+                <audio id="meow" src=""></audio>
+                <img title="Changes the picture to a random new one." id="cat" onclick="change()" src="" alt="A cute cat" />
+            </article>
+            <section>
+                <ul>
+                    <li>
+                        <button title="Allows the user to add an image by providing a url to an image." onclick="add()">Add Image</button>
+                    </li>
+                    <li>
+                        <a title="A link to the source of the image that opens in a new tab." id="source" href="" target="_blank">Image Source</a>
+                    </li>
+                    <li>
+                        <button title="Sends A Report To The Server. A high ratio of reports/views removes the image." onclick="bad()">Report Non-Cat Image</button>
+                    </li>
+                </ul>
+            </section>
+        </main>
     </body>
 </html>

@@ -9,6 +9,10 @@ app = Flask(__name__)
 def opening_page_hmtl():
     return send_file("html/page.html", mimetype="text/html")
 
+@app.route("/test")
+def webgl_html():
+    return send_file("html/webgl.html", mimetype="text/html")
+
 @app.route("/resources/favicon.ico")
 def getFavicon():
     return send_file("resources/favicon.ico", mimetype="image/x-icon")
@@ -45,8 +49,12 @@ def newImage():
     return jsonify({"id": catid, "url": url, "views": views + 1})
 
 @app.route("/javascript/page.js")
-def opening_page_js():
+def webgl_js():
     return send_file("javascript/page.js", mimetype="text/javascript")
+
+@app.route("/javascript/webgl.js")
+def opening_page_js():
+    return send_file("javascript/webgl.js", mimetype="text/javascript")
 
 @app.route("/add", methods=["GET"])
 def addURL():
