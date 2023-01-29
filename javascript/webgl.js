@@ -59,9 +59,11 @@ function render() {
     canvas.height = canvas.clientHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
    gl.useProgram(program);
-    xtrans += 2*(Math.random() - 0.5)/100;
-    ytrans += 2*(Math.random() - 0.5)/100;
-    gl.uniformMatrix4fv(transformationLocation, false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, 0, 1]);
+    xtrans += 2*(Math.random() - 0.5)/50;
+    ytrans += 2*(Math.random() - 0.5)/50;
+    theta += 10*2*Math.PI/360;
+    theta %= 2*Math.PI;
+    gl.uniformMatrix4fv(transformationLocation, false, [Math.cos(theta), Math.sin(theta), 0, 0, -Math.sin(theta), Math.cos(theta), 0, 0, 0, 0, 1, 0, xtrans, ytrans, 0, 1]);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
@@ -71,6 +73,7 @@ function render() {
     gl.drawArrays(primitiveType, offset, count);
 }
 
-let xtrans = -Math.random();
-let ytrans = -Math.random();
+let xtrans = 0;
+let ytrans = 0;
+let theta = 0;
 setInterval(() => render(), 50);
