@@ -5,14 +5,18 @@ if (gl == null) {
 }
 const vertexShaderSource = `#version 300 es
 in vec4 position;
+uniform mat4 transformation;
+out vec4 vColor;
 void main() {
-    gl_Position = position;
+    gl_Position = transformation*position;
+    vColor = gl_Position*0.5 + 0.5;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
 out vec4 color;
+in vec4 vColor;
 void main() {
-    color = vec4(1.0, 0.0, 1.0, 1.0);
+    color = vColor;
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -37,7 +41,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 const positionLocation = gl.getAttribLocation(program, "position");
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const positions = [0, 0, 0, 0.5, 0.7, 0];
+const positions = [0, 0, 0, 0.9, 0.9, 0];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 const positionVAO = gl.createVertexArray();
 gl.bindVertexArray(positionVAO);
@@ -48,12 +52,16 @@ const normalize = false;
 const stride = 0;
 const offset = 0;
 gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
-gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+const transformationLocation = gl.getUniformLocation(program, "transformation");
  
 function render() {
-    gl.useProgram(program);
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+   gl.useProgram(program);
+    xtrans += 2*(Math.random() - 0.5)/100;
+    ytrans += 2*(Math.random() - 0.5)/100;
+    gl.uniformMatrix4fv(transformationLocation, false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, 0, 1]);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
@@ -63,4 +71,6 @@ function render() {
     gl.drawArrays(primitiveType, offset, count);
 }
 
-render();
+let xtrans = -Math.random();
+let ytrans = -Math.random();
+setInterval(() => render(), 50);
