@@ -64,7 +64,7 @@ function render() {
     theta += 10*2*Math.PI/360;
     theta %= 2*Math.PI;
     scale += 2*(Math.random() - 0.5)/10;
-    gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta), Math.sin(theta), 0, 0, -Math.sin(theta), scale*Math.cos(theta), 0, 0, 0, 0, 1, 0, xtrans, ytrans, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta), scale*Math.sin(theta), 0, 0, -scale*Math.sin(theta), scale*Math.cos(theta), 0, 0, 0, 0, 1, 0, xtrans, ytrans, 0, 1]);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
