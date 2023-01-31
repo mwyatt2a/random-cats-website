@@ -13,6 +13,10 @@ def opening_page_hmtl():
 def webgl_html():
     return send_file("html/webgl.html", mimetype="text/html")
 
+@app.route("/testbmp")
+def webgl_bmp():
+    return send_file("resources/blackbuck.bmp", mimetype="image/bmp")
+
 @app.route("/resources/favicon.ico")
 def getFavicon():
     return send_file("resources/favicon.ico", mimetype="image/x-icon")
