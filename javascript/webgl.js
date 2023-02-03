@@ -16,10 +16,21 @@ void main() {
 const fragmentShaderSource = `#version 300 es
 precision highp float;
 uniform sampler2D texImage;
-out vec4 color;
+uniform float kernel[9];
 in vec2 fragTexCoord;
+out vec4 color;
 void main() {
-    color = texture(texImage, fragTexCoord);
+    vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
+    vec4 colorSum = texture(texImage, fragTexCoord + pixelSize*vec2(-1, -1))*kernel[0] +
+        texture(texImage, fragTexCoord + pixelSize*vec2(0, -1))*kernel[1] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(1, -1))*kernel[2] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(-1, 0))*kernel[3] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(0, 0))*kernel[4] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(1, 0))*kernel[5] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(-1, 1))*kernel[6] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(0, 1))*kernel[7] + 
+        texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
+    color = vec4(colorSum.rgb, 1);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -30,6 +41,7 @@ function createShader(type, source) {
     }
     else {
         document.querySelector("h2").innerHTML = "WebGL shader failed compilation.";
+        console.log(gl.getShaderInfoLog(shader));
     }
 }
 const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
@@ -79,22 +91,30 @@ const internalFormat = gl.RGBA;
 const sourceFormat = gl.RGBA;
 const srcType = gl.UNSIGNED_BYTE;
 const image = new Image();
-image.src = "/testbmp";
+image.src = "testbmp";
 image.onload = () => gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, sourceFormat, srcType, image);
+let gaussianBlur = [1, 2, 1, 2, 3, 2, 1, 2, 1].map((elem) => elem/16);
+let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
+const kernelLocation = gl.getUniformLocation(program, "kernel");
  
 function render() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-   gl.useProgram(program);
-    xtrans += -1;
-    ytrans += 1;
-    theta += 10*2*Math.PI/360;
-    theta %= 2*Math.PI;
-    scale += -0.001;
+    gl.useProgram(program);
+    if (loop >= 20) {
+        loop = 0;
+        times *= -1;
+    }
+    loop++;
+    xtrans += times*10;
+    ytrans += times*10;
+    theta += times*10*2*Math.PI/360;
+    scale += times*0.05;
     let ratio = canvas.width/canvas.height;
     gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
     gl.uniform1i(texImageLocation, unit);
+    gl.uniform1fv(kernelLocation, emboss);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
@@ -106,6 +126,8 @@ function render() {
 
 let xtrans = 0;
 let ytrans = 0;
-let theta = 0;
+let theta = -Math.PI/2;
 let scale = 1;
+let loop = 0;
+let times = 1;
 setInterval(() => render(), 50);
