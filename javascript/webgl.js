@@ -78,14 +78,16 @@ gl.vertexAttribPointer(texCoordLocation, size, type, normalize, stride, offset);
 const texImageLocation = gl.getUniformLocation(program, "texImage");
 const unit = 0;
 gl.activeTexture(gl.TEXTURE0 + unit);
-const texture = gl.createTexture();
-gl.bindTexture(gl.TEXTURE_2D, texture);
-
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+function textureSetup() {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    return texture;
+}
+const mainTexture = textureSetup();
 const mipLevel = 0;
 const internalFormat = gl.RGBA;
 const sourceFormat = gl.RGBA;
@@ -93,14 +95,28 @@ const srcType = gl.UNSIGNED_BYTE;
 const image = new Image();
 image.src = "testbmp";
 image.onload = () => gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, sourceFormat, srcType, image);
+/*const border = 0;
+const data = null;
+const backTexture1 = textureSetup();
+gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
+const backTexture2 = textureSetup();
+gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
+const fbo1 = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
+const attachmentPoint = gl.COLOR_ATTACHMENT0;
+gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture1, mipLevel);
+const fbo2 = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture2, mipLevel);
+*/
 let gaussianBlur = [1, 2, 1, 2, 3, 2, 1, 2, 1].map((elem) => elem/16);
 let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
+let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
  
 function render() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.useProgram(program);
     if (loop >= 20) {
         loop = 0;
@@ -112,15 +128,33 @@ function render() {
     theta += times*10*2*Math.PI/360;
     scale += times*0.05;
     let ratio = canvas.width/canvas.height;
-    gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
     gl.uniform1i(texImageLocation, unit);
-    gl.uniform1fv(kernelLocation, emboss);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
     let count = 6;
+/*
+    gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.viewport(0, 0, image.width, image.height);
+    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
+    gl.uniform1fv(kernelLocation, gaussianBlur);
+    gl.drawArrays(primitiveType, offset, count);
+
+    gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.viewport(0, 0, image.width, image.height);
+    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
+    gl.uniform1fv(kernelLocation, emboss);
+    gl.drawArrays(primitiveType, offset, count);
+*/
+    gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
 }
 
