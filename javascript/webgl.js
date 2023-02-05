@@ -93,22 +93,28 @@ const internalFormat = gl.RGBA;
 const sourceFormat = gl.RGBA;
 const srcType = gl.UNSIGNED_BYTE;
 const image = new Image();
-image.src = "testbmp";
-image.onload = () => gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, sourceFormat, srcType, image);
-/*const border = 0;
+const border = 0;
 const data = null;
-const backTexture1 = textureSetup();
-gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
-const backTexture2 = textureSetup();
-gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
-const fbo1 = gl.createFramebuffer();
-gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
-const attachmentPoint = gl.COLOR_ATTACHMENT0;
-gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture1, mipLevel);
-const fbo2 = gl.createFramebuffer();
-gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
-gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture2, mipLevel);
-*/
+image.src = "testbmp";
+let backTexture1;
+let backTexture2;
+let fbo1;
+let fbo2;
+image.onload = () => {
+    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, sourceFormat, srcType, image);
+    backTexture1 = textureSetup();
+    gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
+    backTexture2 = textureSetup();
+    gl.texImage2D(gl.TEXTURE_2D, mipLevel, internalFormat, image.width, image.height, border, sourceFormat, srcType, data);
+    fbo1 = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
+    const attachmentPoint = gl.COLOR_ATTACHMENT0;
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture1, mipLevel);
+    fbo2 = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture2, mipLevel);
+};
 let gaussianBlur = [1, 2, 1, 2, 3, 2, 1, 2, 1].map((elem) => elem/16);
 let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
 let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
@@ -133,7 +139,6 @@ function render() {
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
     let count = 6;
-/*
     gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, mainTexture);
@@ -143,14 +148,13 @@ function render() {
 
     gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
-    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.bindTexture(gl.TEXTURE_2D, backTexture1);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-*/
     gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.bindTexture(gl.TEXTURE_2D, mainTexture);
+    gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
