@@ -115,7 +115,7 @@ image.onload = () => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture2, mipLevel);
 };
-let gaussianBlur = [1, 2, 1, 2, 3, 2, 1, 2, 1].map((elem) => elem/16);
+let gaussianBlur = [1/16, 2/16, 1/16, 2/16, 3/16, 2/16, 1/16, 2/16, 1/16];
 let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
 let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
@@ -139,19 +139,20 @@ function render() {
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
     let count = 6;
-    gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, false, [2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, mainTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
     gl.uniform1fv(kernelLocation, gaussianBlur);
     gl.drawArrays(primitiveType, offset, count);
 
-    gl.uniformMatrix4fv(transformationLocation, false, [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, false, [2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture1);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
+
     gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
