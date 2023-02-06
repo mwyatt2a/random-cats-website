@@ -157,9 +157,9 @@ const colorLocation = gl.getAttribLocation(program2, "backColor");
 gl.enableVertexAttribArray(colorLocation);
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-gl.vertexAttribPointer(colorLocation, size, type, true, stride, offset);
+const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30];
+gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
+gl.vertexAttribPointer(colorLocation, size, gl.UNSIGNED_BYTE, true, stride, offset);
 
 
 
@@ -247,7 +247,7 @@ function render() {
     ztheta += times*10*2*Math.PI/360;
     ytheta += times*10*4*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
-    scale += times*0.05;
+    scale += -times*0.05;
     ratio = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
     gl.bindVertexArray(texturedVAO);
@@ -293,7 +293,7 @@ let ztrans = 0;
 let ztheta = -Math.PI/2;
 let ytheta = -Math.PI/2;
 let xtheta = -Math.PI/2;
-let scale = 1;
+let scale = 1.7;
 let loop = 0;
 let times = 1;
 setInterval(() => render(), 50);
