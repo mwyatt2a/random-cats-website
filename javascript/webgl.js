@@ -1,3 +1,4 @@
+//Functions and basic setup
 function matrixMultiply(A, B) {
     let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     C[0] = A[0]*B[0] + A[4]*B[1] + A[8]*B[2] + A[12]*B[3];
@@ -21,11 +22,11 @@ function matrixMultiply(A, B) {
 function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
     let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [];
-    let xRotation = [];
+    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
+    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
     let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
     let clipConversion = [1/coordinateSize/ratio, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1];
-    return matrixMultiply(clipConversion, matrixMultiply(translation, matrixMultiply(zRotation, scaling)));
+    return matrixMultiply(clipConversion, matrixMultiply(xRotation, matrixMultiply(translation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling)))));
 }
 const coordinateSize = 1000;
 let ratio = 1;
@@ -34,6 +35,12 @@ const gl = canvas.getContext("webgl2");
 if (gl == null) {
     document.querySelector("h2").innerHTML = "WebGL is not supported by your browers. Cannot Render Animation.";
 }
+
+
+
+
+
+//Shaders and their setup
 const vertexShaderSource = `#version 300 es
 in vec4 position;
 in vec2 vertexTexCoord;
@@ -83,6 +90,12 @@ gl.linkProgram(program);
 if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     document.querySelector("h2").innerHTML += "WebGL linking failed.";
 }
+
+
+
+
+
+//VAO Setups
 const positionLocation = gl.getAttribLocation(program, "position");
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -97,7 +110,6 @@ const normalize = false;
 const stride = 0;
 const offset = 0;
 gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
-const transformationLocation = gl.getUniformLocation(program, "transformation");
 const texCoordLocation = gl.getAttribLocation(program, "vertexTexCoord");
 const texCoordBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
@@ -105,7 +117,12 @@ const texCoords = [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 gl.enableVertexAttribArray(texCoordLocation);
 gl.vertexAttribPointer(texCoordLocation, size, type, normalize, stride, offset);
-const texImageLocation = gl.getUniformLocation(program, "texImage");
+
+
+
+
+
+//Textures and framebuffers
 const unit = 0;
 gl.activeTexture(gl.TEXTURE0 + unit);
 function textureSetup() {
@@ -145,11 +162,24 @@ image.onload = () => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, backTexture2, mipLevel);
 };
+
+
+
+
+
+//Uniforms
 let gaussianBlur = [1/16, 2/16, 1/16, 2/16, 3/16, 2/16, 1/16, 2/16, 1/16];
 let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
 let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
+const transformationLocation = gl.getUniformLocation(program, "transformation");
+const texImageLocation = gl.getUniformLocation(program, "texImage");
  
+
+
+
+
+//Render Loop
 function render() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
@@ -161,7 +191,7 @@ function render() {
     loop++;
     xtrans += times*10;
     ytrans += times*10;
-//    ztrans += times*10;
+    ztrans += times*10;
     ztheta += times*10*2*Math.PI/360;
     ytheta += times*10*2*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
@@ -178,7 +208,6 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
     gl.uniform1fv(kernelLocation, gaussianBlur);
     gl.drawArrays(primitiveType, offset, count);
-
     gl.uniformMatrix4fv(transformationLocation, false, [2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture1);
@@ -195,6 +224,11 @@ function render() {
     gl.drawArrays(primitiveType, offset, count);
 }
 
+
+
+
+
+//Main Code
 let xtrans = 0;
 let ytrans = 0;
 let ztrans = 0;
