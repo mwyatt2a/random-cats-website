@@ -55,7 +55,7 @@ precision highp float;
 uniform sampler2D texImage;
 uniform float kernel[9];
 in vec2 fragTexCoord;
-out vec4 color;
+out vec4 outColor;
 void main() {
     vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
     vec4 colorSum = texture(texImage, fragTexCoord + pixelSize*vec2(-1, -1))*kernel[0] +
@@ -67,7 +67,7 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(-1, 1))*kernel[6] + 
         texture(texImage, fragTexCoord + pixelSize*vec2(0, 1))*kernel[7] + 
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
-    color = vec4(colorSum.rgb, 1);
+    outColor = vec4(colorSum.rgb, 1);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -91,6 +91,32 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     document.querySelector("h2").innerHTML += "WebGL linking failed.";
 }
 
+const vertexShaderSource2 = `#version 300 es
+in vec4 position;
+in vec4 backColor;
+uniform mat4 transformation;
+out vec4 color;
+void main() {
+    gl_Position = transformation*position;
+    color = backColor;
+}`;
+const fragmentShaderSource2 = `#version 300 es
+precision highp float;
+in vec4 color;
+out vec4 outColor;
+void main() {
+    outColor = color;
+}`;
+const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
+const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
+const program2 = gl.createProgram();
+gl.attachShader(program2, vertexShader2);
+gl.attachShader(program2, fragmentShader2);
+gl.linkProgram(program2);
+if (!gl.getProgramParameter(program2, gl.LINK_STATUS)) {
+    document.querySelector("h2").innerHTML += "WebGL linking failed.";
+}
+
 
 
 
@@ -99,12 +125,12 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 const positionLocation = gl.getAttribLocation(program, "position");
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const positions = [-500, -500, 500, -500, 500, 500, 500, 500, -500, 500, -500, -500];
+const positions = [-500, -500, 100, 500, -500, 100, 500, 500, 100, 500, 500, 100, -500, 500, 100, -500, -500, 100];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-const positionVAO = gl.createVertexArray();
-gl.bindVertexArray(positionVAO);
+const texturedVAO = gl.createVertexArray();
+gl.bindVertexArray(texturedVAO);
 gl.enableVertexAttribArray(positionLocation);
-const size = 2;
+const size = 3;
 const type = gl.FLOAT;
 const normalize = false;
 const stride = 0;
@@ -116,7 +142,24 @@ gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
 const texCoords = [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 gl.enableVertexAttribArray(texCoordLocation);
-gl.vertexAttribPointer(texCoordLocation, size, type, normalize, stride, offset);
+gl.vertexAttribPointer(texCoordLocation, 2, type, normalize, stride, offset);
+
+const backgroundVAO = gl.createVertexArray();
+gl.bindVertexArray(backgroundVAO);
+const positionLocation2 = gl.getAttribLocation(program2, "position");
+gl.enableVertexAttribArray(positionLocation2);
+const positionBuffer2 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer2);
+const positions2 = [-500, -500, -100, 500, 500, -100, 500, -500, -100, 500, 500, -100, -500, -500, -100, -500, 500, -100, 500, -500, 100, 500, -500, -100, 500, 500, -100, 500, 500, -100, 500, 500, 100, 500, -500, 100, -500, -500, 100, -500, 500, -100, -500, -500, -100, -500, 500, -100, -500, -500, 100, -500, 500, 100, -500, 500, 100, 500, 500, 100, 500, 500, -100, 500, 500, -100, -500, 500, -100, -500, 500, 100, -500, -500, -100, 500, -500, -100, 500, -500, 100, 500, -500, 100, -500, -500, 100, -500, -500, -100];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions2), gl.STATIC_DRAW);
+gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
+const colorLocation = gl.getAttribLocation(program2, "backColor");
+gl.enableVertexAttribArray(colorLocation);
+const colorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+gl.vertexAttribPointer(colorLocation, size, type, true, stride, offset);
 
 
 
@@ -173,8 +216,17 @@ let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
 let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
 const transformationLocation = gl.getUniformLocation(program, "transformation");
+const transformationLocation2 = gl.getUniformLocation(program2, "transformation");
 const texImageLocation = gl.getUniformLocation(program, "texImage");
+
  
+
+
+
+//State Setup
+gl.enable(gl.CULL_FACE);
+gl.enable(gl.DEPTH_TEST);
+
 
 
 
@@ -184,7 +236,7 @@ function render() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     gl.useProgram(program);
-    if (loop >= 20) {
+    if (loop >= 30) {
         loop = 0;
         times *= -1;
     }
@@ -193,12 +245,12 @@ function render() {
     ytrans += times*10;
     ztrans += times*10;
     ztheta += times*10*2*Math.PI/360;
-    ytheta += times*10*2*Math.PI/360;
+    ytheta += times*10*4*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
     scale += times*0.05;
     ratio = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
-    gl.bindVertexArray(positionVAO);
+    gl.bindVertexArray(texturedVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
     let count = 6;
@@ -214,14 +266,20 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    gl.uniformMatrix4fv(transformationLocation, false, createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio));
+    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio);
+    gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
+
+    gl.useProgram(program2);
+    gl.bindVertexArray(backgroundVAO);
+    gl.uniformMatrix4fv(transformationLocation2, false, transformationMatrix);
+    gl.drawArrays(primitiveType, offset, 30);
 }
 
 
