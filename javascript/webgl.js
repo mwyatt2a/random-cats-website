@@ -1,3 +1,33 @@
+function matrixMultiply(A, B) {
+    let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    C[0] = A[0]*B[0] + A[1]*B[4] + A[2]*B[8] + A[3]*B[12];
+    C[4] = A[4]*B[0] + A[5]*B[4] + A[6]*B[8] + A[7]*B[12];
+    C[8] = A[8]*B[0] + A[9]*B[4] + A[10]*B[8] + A[11]*B[12];
+    C[12] = A[12]*B[0] + A[13]*B[4] + A[14]*B[8] + A[15]*B[12];
+    C[1] = A[0]*B[1] + A[1]*B[5] + A[2]*B[9] + A[3]*B[13];
+    C[5] = A[4]*B[1] + A[5]*B[5] + A[6]*B[9] + A[7]*B[13];
+    C[9] = A[8]*B[1] + A[9]*B[5] + A[10]*B[9] + A[11]*B[13];
+    C[13] = A[12]*B[1] + A[13]*B[5] + A[14]*B[9] + A[15]*B[13];
+
+    C[2] = A[0]*B[2] + A[1]*B[6] + A[2]*B[10] + A[3]*B[14];
+    C[6] = A[4]*B[2] + A[5]*B[6] + A[6]*B[10] + A[7]*B[14];
+    C[10] = A[8]*B[2] + A[9]*B[6] + A[10]*B[10] + A[11]*B[14];
+    C[14] = A[12]*B[2] + A[13]*B[6] + A[14]*B[10] + A[15]*B[14];
+    C[3] = A[0]*B[3] + A[1]*B[7] + A[2]*B[11] + A[3]*B[15];
+    C[7] = A[4]*B[3] + A[5]*B[7] + A[6]*B[11] + A[7]*B[15];
+    C[11] = A[8]*B[3] + A[9]*B[7] + A[10]*B[11] + A[11]*B[15];
+    C[15] = A[12]*B[3] + A[13]*B[7] + A[14]*B[11] + A[15]*B[15];
+    return C;
+}
+function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize) {
+    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+    let zRotation = [Math.cos(ztheta), -Math.sin(ztheta), 0, 0, Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    let yRotation = [];
+    let xRotation = [];
+    let translation = [1, 0, 0, xtrans, 0, 1, 0, ytrans, 0, 0, 1, ztrans, 0, 0, 0, 1];
+    let clipConversion = [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1];
+    return matrixMultiply(clipConversion, matrixMultiply(translation, matrixMultiply(zRotation, scaling)));
+}
 const coordinateSize = 1000;
 const canvas = document.querySelector("#webgl");
 const gl = canvas.getContext("webgl2");
@@ -131,7 +161,9 @@ function render() {
     loop++;
     xtrans += times*10;
     ytrans += times*10;
-    theta += times*10*2*Math.PI/360;
+    ztheta += times*10*2*Math.PI/360;
+    ytheta += times*10*2*Math.PI/360;
+    xtheta += times*10*2*Math.PI/360;
     scale += times*0.05;
     let ratio = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
@@ -153,7 +185,7 @@ function render() {
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
 
-    gl.uniformMatrix4fv(transformationLocation, false, [scale*Math.cos(theta)/ratio/coordinateSize, scale*Math.sin(theta)/coordinateSize, 0, 0, -scale*Math.sin(theta)/ratio/coordinateSize, scale*Math.cos(theta)/coordinateSize, 0, 0, 0, 0, 1, 0, xtrans/ratio/coordinateSize, ytrans/coordinateSize, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, true, createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize));
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -165,7 +197,10 @@ function render() {
 
 let xtrans = 0;
 let ytrans = 0;
-let theta = -Math.PI/2;
+let ztrans = 0;
+let ztheta = -Math.PI/2;
+let ytheta = -Math.PI/2;
+let xtheta = -Math.PI/2;
 let scale = 1;
 let loop = 0;
 let times = 1;
