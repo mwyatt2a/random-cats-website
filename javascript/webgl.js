@@ -18,16 +18,17 @@ function matrixMultiply(A, B) {
     C[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
     return C;
 }
-function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize) {
+function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
     let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     let yRotation = [];
     let xRotation = [];
     let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    let clipConversion = [1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1];
+    let clipConversion = [1/coordinateSize/ratio, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1];
     return matrixMultiply(clipConversion, matrixMultiply(translation, matrixMultiply(zRotation, scaling)));
 }
 const coordinateSize = 1000;
+let ratio = 1;
 const canvas = document.querySelector("#webgl");
 const gl = canvas.getContext("webgl2");
 if (gl == null) {
@@ -165,7 +166,7 @@ function render() {
     ytheta += times*10*2*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
     scale += times*0.05;
-    let ratio = canvas.width/canvas.height;
+    ratio = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
     gl.bindVertexArray(positionVAO);
     let primitiveType = gl.TRIANGLES;
@@ -184,8 +185,7 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-
-    gl.uniformMatrix4fv(transformationLocation, false, createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize));
+    gl.uniformMatrix4fv(transformationLocation, false, createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio));
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
