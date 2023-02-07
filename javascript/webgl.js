@@ -25,7 +25,7 @@ function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytran
     let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
     let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
     let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    let clipConversion = [1/coordinateSize/ratio, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, 1];
+    let clipConversion = [1/coordinateSize/ratio, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, -1/coordinateSize, 0, 0, 0, 0, 1];
     return matrixMultiply(clipConversion, matrixMultiply(xRotation, matrixMultiply(translation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling)))));
 }
 const coordinateSize = 1000;
