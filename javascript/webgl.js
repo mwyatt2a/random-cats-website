@@ -19,17 +19,17 @@ function matrixMultiply(A, B) {
     C[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
     return C;
 }
-function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio) {
+function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, fieldOfView, near, far) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
     let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
     let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
     let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    let clipConversion = [1/coordinateSize/ratio, 0, 0, 0, 0, 1/coordinateSize, 0, 0, 0, 0, -1/coordinateSize, 0, 0, 0, 0, 1];
-    return matrixMultiply(clipConversion, matrixMultiply(xRotation, matrixMultiply(translation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling)))));
+    let f = Math.tan(Math.PI*0.5 -0.5*fieldOfView);
+    let rangeInv = 1.0/(near - far);
+    let projection = [f/aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (near + far)*rangeInv, -1, 0, 0, near*far*rangeInv*2, 0];
+    return matrixMultiply(projection, matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling)))));
 }
-const coordinateSize = 1000;
-let ratio = 1;
 const canvas = document.querySelector("#webgl");
 const gl = canvas.getContext("webgl2");
 if (gl == null) {
@@ -248,25 +248,25 @@ function render() {
     ytheta += times*10*4*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
     scale += -times*0.05;
-    ratio = canvas.width/canvas.height;
+    let aspect = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
     gl.bindVertexArray(texturedVAO);
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
     let count = 6;
-    gl.uniformMatrix4fv(transformationLocation, false, [2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, false, [2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, mainTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
     gl.uniform1fv(kernelLocation, gaussianBlur);
     gl.drawArrays(primitiveType, offset, count);
-    gl.uniformMatrix4fv(transformationLocation, false, [2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 2/coordinateSize, 0, 0, 0, 0, 1]);
+    gl.uniformMatrix4fv(transformationLocation, false, [2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture1);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, coordinateSize, ratio);
+    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, -2000);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
@@ -289,7 +289,7 @@ function render() {
 //Main Code
 let xtrans = 0;
 let ytrans = 0;
-let ztrans = 0;
+let ztrans = -1000;
 let ztheta = -Math.PI/2;
 let ytheta = -Math.PI/2;
 let xtheta = -Math.PI/2;
