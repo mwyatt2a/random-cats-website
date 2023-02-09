@@ -266,7 +266,7 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, -2000);
+    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
