@@ -24,8 +24,8 @@ function matrixInverse(A) {
     f[0] = A[10]*A[15] - A[11]*A[14];
     f[1] = A[9]*A[15] - A[11]*A[13];
     f[2] = A[9]*A[14] - A[10]*A[13];
-    f[3] = A[6]*A[16] - A[7]*A[14];
-    f[4] = A[5]*A[16] - A[7]*A[13];
+    f[3] = A[6]*A[15] - A[7]*A[14];
+    f[4] = A[5]*A[15] - A[7]*A[13];
     f[5] = A[5]*A[14] - A[6]*A[13];
     f[6] = A[6]*A[11] - A[7]*A[10];
     f[7] = A[5]*A[11] - A[7]*A[9];
@@ -57,7 +57,10 @@ function matrixInverse(A) {
     C[14] = -A[0]*f[5] + A[1]*f[12] - A[2]*f[16];
     C[15] = A[0]*f[8] - A[1]*f[14] + A[2]*f[17];
     let determinant = A[0]*C[0] + A[1]*C[4] + A[2]*C[8] + A[3]*C[12];
-    return matrixMultiply([1/determinant, 0, 0, 0, 0, 1/determinant, 0, 0, 0, 0, 1/determinant, 0, 0, 0, 0, 1], C);
+    for (let i = 0; i < 16; i++) {
+        C[i] = C[i]/determinant;
+    }
+    return C;
 }
 function vectorNormalize(v) {
     let magnitude = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]); 
@@ -86,7 +89,7 @@ function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytran
         let newY = vectorNormalize(vectorCross(newZ, newX));
         cameraMatrix = [newX[0], newZ[1], newZ[2], 0, newY[0], newY[1], newY[2], 0, newZ[0], newZ[1], newZ[2], 0, camx, camy, camz, 1];
     }
-    let viewMatrix = cameraMatrix;//matrixInverse(cameraMatrix);
+    let viewMatrix = matrixInverse(cameraMatrix);
     let f = Math.tan(Math.PI*0.5 -0.5*fieldOfView);
     let rangeInv = 1.0/(near - far);
     let projection = [f/aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (near + far)*rangeInv, -1, 0, 0, near*far*rangeInv*2, 0];
@@ -305,7 +308,7 @@ function render() {
     }
     if (cameraLoop >= 10) {
         cameraLoop = 0;
-//        focus = !focus;
+        focus = !focus;
     }
     loop++;
     xtrans += times*10;
@@ -314,7 +317,17 @@ function render() {
     ztheta += times*10*2*Math.PI/360;
     ytheta += times*10*4*Math.PI/360;
     xtheta += times*10*2*Math.PI/360;
-    scale += -times*0.05;
+    scale += -times*0.02;
+    camztheta = 0;
+    camytheta = 0;
+    camxtheta = 0;
+    deg += 16*Math.PI/360;
+    camx = 500*Math.cos(deg);
+    camy = 0;
+    camz = -500*Math.sin(deg);
+    focusx = xtrans;
+    focusy = ytrans;
+    focusz = ztrans;
     let aspect = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
     gl.bindVertexArray(texturedVAO);
@@ -360,7 +373,7 @@ let ztrans = -1000;
 let ztheta = -Math.PI/2;
 let ytheta = -Math.PI/2;
 let xtheta = -Math.PI/2;
-let scale = 1.7;
+let scale = 1;
 let loop = 0;
 let cameraLoop = 0;
 let focus = false;
@@ -370,8 +383,9 @@ let camxtheta = 0;
 let camx = 0;
 let camy = 0;
 let camz = 0;
-let focusx = -1;
-let focusy = -1;
-let focusz = -1;
+let focusx = 10
+let focusy = 10;
+let focusz = -10;
 let times = 1;
+let deg = 0;
 setInterval(() => render(), 50);
