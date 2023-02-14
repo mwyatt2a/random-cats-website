@@ -15,7 +15,7 @@ def webgl_html():
 
 @app.route("/testbmp")
 def webgl_bmp():
-    return send_file("resources/blackbuck.bmp", mimetype="image/bmp")
+    return send_file("resources/singing-cat.bmp", mimetype="image/bmp")
 
 @app.route("/resources/favicon.ico")
 def getFavicon():
