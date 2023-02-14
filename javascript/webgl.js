@@ -135,6 +135,7 @@ uniform sampler2D texImage;
 uniform float kernel[9];
 uniform float ambient;
 uniform float diffuse;
+uniform vec3 reversedSun;
 in vec2 fragTexCoord;
 in vec3 v_normal;
 out vec4 outColor;
@@ -151,7 +152,7 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), reversedSun);
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 function createShader(type, source) {
@@ -194,11 +195,12 @@ in vec4 color;
 in vec3 v_normal;
 uniform float ambient;
 uniform float diffuse;
+uniform vec3 reversedSun;
 out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), reversedSun);
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
@@ -329,6 +331,8 @@ const ambientLocation = gl.getUniformLocation(program, "ambient");
 const ambientLocation2 = gl.getUniformLocation(program2, "ambient");
 const diffuseLocation = gl.getUniformLocation(program, "diffuse");
 const diffuseLocation2 = gl.getUniformLocation(program2, "diffuse");
+const reversedSunLocation = gl.getUniformLocation(program, "reversedSun");
+const reversedSunLocation2 = gl.getUniformLocation(program2, "reversedSun");
 
  
 
@@ -402,6 +406,7 @@ function render() {
     gl.uniform1fv(kernelLocation, emboss);
     gl.uniform1f(ambientLocation, ambient);
     gl.uniform1f(diffuseLocation, diffuse);
+    gl.uniform3f(reversedSunLocation, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -409,6 +414,7 @@ function render() {
     gl.uniformMatrix4fv(transformationLocation2, false, transformationMatrix);
     gl.uniform1f(ambientLocation2, ambient);
     gl.uniform1f(diffuseLocation2, diffuse);
+    gl.uniform3f(reversedSunLocation2, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -438,6 +444,7 @@ let focusy = 10;
 let focusz = -10;
 let times = 1;
 let deg = 0;
-let ambient = 0.5;
-let diffuse = 0.5;
+let ambient = 0.0;
+let diffuse = 1.0;
+let reversedSun = vectorNormalize([1, 1, 1]);
 setInterval(() => render(), 50);
