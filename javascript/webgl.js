@@ -19,6 +19,17 @@ function matrixMultiply(A, B) {
     C[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
     return C;
 }
+function matrixTranspose(A) {
+    return [A[0], A[4], A[8], A[12], A[1], A[5], A[9], A[13], A[2], A[6], A[10], A[14], A[3], A[7], A[11], A[15]];
+}
+function createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
+    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
+    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
+    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
+    return matrixTranspose(matrixInverse(matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
+}
 function matrixInverse(A) {
     let f = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     f[0] = A[10]*A[15] - A[11]*A[14];
@@ -109,17 +120,21 @@ if (gl == null) {
 const vertexShaderSource = `#version 300 es
 in vec4 position;
 in vec2 vertexTexCoord;
+in vec3 a_normal;
 uniform mat4 transformation;
 out vec2 fragTexCoord;
+out vec3 v_normal;
 void main() {
     gl_Position = transformation*position;
     fragTexCoord = vertexTexCoord;
+    v_normal = a_normal;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
 uniform sampler2D texImage;
 uniform float kernel[9];
 in vec2 fragTexCoord;
+in vec3 v_normal;
 out vec4 outColor;
 void main() {
     vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
@@ -133,6 +148,7 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(0, 1))*kernel[7] + 
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
+    outColor.rgb *= dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -208,6 +224,13 @@ const texCoords = [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 gl.enableVertexAttribArray(texCoordLocation);
 gl.vertexAttribPointer(texCoordLocation, 2, type, normalize, stride, offset);
+const normalLocation = gl.getAttribLocation(program, "a_normal");
+const normalBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+const normals = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(normalLocation);
+gl.vertexAttribPointer(normalLocation, size, type, normalize, stride, offset);
 
 const backgroundVAO = gl.createVertexArray();
 gl.bindVertexArray(backgroundVAO);
