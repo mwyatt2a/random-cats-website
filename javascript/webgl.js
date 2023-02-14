@@ -262,7 +262,7 @@ const colorLocation = gl.getAttribLocation(program2, "backColor");
 gl.enableVertexAttribArray(colorLocation);
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30];
+const colors = [55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55];
 gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
 gl.vertexAttribPointer(colorLocation, size, gl.UNSIGNED_BYTE, true, stride, offset);
 
@@ -365,13 +365,13 @@ function render() {
         focus = !focus;
     }
     loop++;
-    xtrans += times*10;
-    ytrans += times*10;
-    ztrans += times*10;
-    ztheta += times*10*2*Math.PI/360;
-    ytheta += times*10*4*Math.PI/360;
-    xtheta += times*10*2*Math.PI/360;
-    scale += -times*0.02;
+    xtrans += times*5;
+    ytrans += times*5;
+    ztrans += times*5;
+    ztheta += times*5*2*Math.PI/360;
+    ytheta += times*5*4*Math.PI/360;
+    xtheta += times*5*2*Math.PI/360;
+    scale += -times*0.01;
     camztheta = 0;
     camytheta = 0;
     camxtheta = 0;
