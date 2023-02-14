@@ -19,9 +19,6 @@ function matrixMultiply(A, B) {
     C[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
     return C;
 }
-/*function matrixTranspose(A) {
-    return [A[0], A[4], A[8], A[12], A[1], A[5], A[9], A[13], A[2], A[6], A[10], A[14], A[3], A[7], A[11], A[15]];
-}*/
 function matrixInverse(A) {
     let f = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     f[0] = A[10]*A[15] - A[11]*A[14];
@@ -96,16 +93,7 @@ function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytran
     let f = Math.tan(Math.PI*0.5 -0.5*fieldOfView);
     let rangeInv = 1.0/(near - far);
     let projection = [f/aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (near + far)*rangeInv, -1, 0, 0, near*far*rangeInv*2, 0];
-    return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-//    return matrixMultiply(projection, matrixMultiply(viewMatrix, matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
-}
-function createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
-    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
-    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
-    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
-    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    return matrixTranspose(matrixInverse(matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
+    return matrixMultiply(projection, matrixMultiply(viewMatrix, matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
 }
 const canvas = document.querySelector("#webgl");
 const gl = canvas.getContext("webgl2");
@@ -121,23 +109,17 @@ if (gl == null) {
 const vertexShaderSource = `#version 300 es
 in vec4 position;
 in vec2 vertexTexCoord;
-//in vec3 a_normal;
 uniform mat4 transformation;
-//uniform mat4 modelInverseTranspose;
 out vec2 fragTexCoord;
-//out vec3 v_normal;
 void main() {
     gl_Position = transformation*position;
     fragTexCoord = vertexTexCoord;
-//    v_normal = a_normal;//mat3(modelInverseTranspose)*a_normal;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
 uniform sampler2D texImage;
 uniform float kernel[9];
-//uniform vec3 reversedSun;
 in vec2 fragTexCoord;
-//in vec3 v_normal;
 out vec4 outColor;
 void main() {
     vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
@@ -151,7 +133,6 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(0, 1))*kernel[7] + 
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
-//    outColor.rgb *= dot(normalize(v_normal), reversedSun);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -178,25 +159,18 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 const vertexShaderSource2 = `#version 300 es
 in vec4 position;
 in vec4 backColor;
-//in vec3 a_normal;
 uniform mat4 transformation;
-//uniform mat4 modelInverseTranspose;
-//out vec3 v_normal;
 out vec4 color;
 void main() {
     gl_Position = transformation*position;
     color = backColor;
-//    v_normal = a_normal;//mat3(modelInverseTranspose)*a_normal;
 }`;
 const fragmentShaderSource2 = `#version 300 es
 precision highp float;
 in vec4 color;
-//in vec3 v_normal;
-//uniform vec3 reversedSun;
 out vec4 outColor;
 void main() {
     outColor = color;
-//    outColor.rgb *= dot(reversedSun, normalize(v_normal));
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
 const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
@@ -234,14 +208,7 @@ const texCoords = [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1];
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 gl.enableVertexAttribArray(texCoordLocation);
 gl.vertexAttribPointer(texCoordLocation, 2, type, normalize, stride, offset);
-/*const normalLocation = gl.getAttribLocation(program, "a_normal");
-const normalBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-const normals = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-gl.enableVertexAttribArray(normalLocation);
-gl.vertexAttribPointer(normalLocation, size, type, normalize, stride, offset);
-*/
+
 const backgroundVAO = gl.createVertexArray();
 gl.bindVertexArray(backgroundVAO);
 const positionLocation2 = gl.getAttribLocation(program2, "position");
@@ -255,17 +222,10 @@ const colorLocation = gl.getAttribLocation(program2, "backColor");
 gl.enableVertexAttribArray(colorLocation);
 const colorBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-const colors = [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30];
+const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 255, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30];
 gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
 gl.vertexAttribPointer(colorLocation, size, gl.UNSIGNED_BYTE, true, stride, offset);
-/*const normalLocation2 = gl.getAttribLocation(program2, "a_normal");
-const normalBuffer2 = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer2);
-const normals2 = [0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals2), gl.STATIC_DRAW);
-gl.enableVertexAttribArray(normalLocation2);
-gl.vertexAttribPointer(normalLocation2, size, type, normalize, stride, offset);
-*/
+
 
 
 
@@ -322,11 +282,7 @@ let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
 const transformationLocation = gl.getUniformLocation(program, "transformation");
 const transformationLocation2 = gl.getUniformLocation(program2, "transformation");
-//const reversedSunLocation = gl.getUniformLocation(program, "reversedSun");
-//const reversedSunLocation2 = gl.getUniformLocation(program2, "reversedSun");
 const texImageLocation = gl.getUniformLocation(program, "texImage");
-//const modelInverseTransposeLocation = gl.getUniformLocation(program, "modelInverseTranpose");
-//const modelInverseTransposeLocation2 = gl.getUniformLocation(program2, "modelInverseTranpose");
 
  
 
@@ -391,10 +347,7 @@ function render() {
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
     let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
-//    let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
-//    gl.uniformMatrix4fv(modelInverseTransposeLocation, false, modelInverseTranspose);
-//    gl.uniform3f(reversedSunLocation, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -406,8 +359,6 @@ function render() {
     gl.useProgram(program2);
     gl.bindVertexArray(backgroundVAO);
     gl.uniformMatrix4fv(transformationLocation2, false, transformationMatrix);
-//    gl.uniformMatrix4fv(modelInverseTransposeLocation2, false, modelInverseTranspose);
-//    gl.uniform3f(reversedSunLocation2, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -437,5 +388,4 @@ let focusy = 10;
 let focusz = -10;
 let times = 1;
 let deg = 0;
-//let reversedSun = vectorNormalize([1,1,1]);
 setInterval(() => render(), 50);
