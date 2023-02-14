@@ -175,18 +175,23 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 const vertexShaderSource2 = `#version 300 es
 in vec4 position;
 in vec4 backColor;
+in vec3 a_normal;
 uniform mat4 transformation;
 out vec4 color;
+out vec3 v_normal;
 void main() {
     gl_Position = transformation*position;
     color = backColor;
+    v_normal = a_normal;
 }`;
 const fragmentShaderSource2 = `#version 300 es
 precision highp float;
 in vec4 color;
+in vec3 v_normal;
 out vec4 outColor;
 void main() {
     outColor = color;
+    outColor.rgb *= dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
 const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
@@ -249,7 +254,13 @@ const colors = [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(colors), gl.STATIC_DRAW);
 gl.vertexAttribPointer(colorLocation, size, gl.UNSIGNED_BYTE, true, stride, offset);
 
-
+const normalLocation2 = gl.getAttribLocation(program2, "a_normal");
+const normalBuffer2 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer2);
+const normals2 = [0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals2), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(normalLocation2);
+gl.vertexAttribPointer(normalLocation2, size, type, normalize, stride, offset);
 
 
 
