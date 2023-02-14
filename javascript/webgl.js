@@ -133,6 +133,8 @@ const fragmentShaderSource = `#version 300 es
 precision highp float;
 uniform sampler2D texImage;
 uniform float kernel[9];
+uniform float ambient;
+uniform float diffuse;
 in vec2 fragTexCoord;
 in vec3 v_normal;
 out vec4 outColor;
@@ -148,7 +150,9 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(0, 1))*kernel[7] + 
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
-    outColor.rgb *= dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    vec3 ambientReflection = ambient*outColor.rgb;
+    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -188,10 +192,14 @@ const fragmentShaderSource2 = `#version 300 es
 precision highp float;
 in vec4 color;
 in vec3 v_normal;
+uniform float ambient;
+uniform float diffuse;
 out vec4 outColor;
 void main() {
     outColor = color;
-    outColor.rgb *= dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    vec3 ambientReflection = ambient*outColor.rgb;
+    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), normalize(vec3(1, 1, 1)));
+    outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
 const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
@@ -317,6 +325,10 @@ const kernelLocation = gl.getUniformLocation(program, "kernel");
 const transformationLocation = gl.getUniformLocation(program, "transformation");
 const transformationLocation2 = gl.getUniformLocation(program2, "transformation");
 const texImageLocation = gl.getUniformLocation(program, "texImage");
+const ambientLocation = gl.getUniformLocation(program, "ambient");
+const ambientLocation2 = gl.getUniformLocation(program2, "ambient");
+const diffuseLocation = gl.getUniformLocation(program, "diffuse");
+const diffuseLocation2 = gl.getUniformLocation(program2, "diffuse");
 
  
 
@@ -388,11 +400,15 @@ function render() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniform1fv(kernelLocation, emboss);
+    gl.uniform1f(ambientLocation, ambient);
+    gl.uniform1f(diffuseLocation, diffuse);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
     gl.bindVertexArray(backgroundVAO);
     gl.uniformMatrix4fv(transformationLocation2, false, transformationMatrix);
+    gl.uniform1f(ambientLocation2, ambient);
+    gl.uniform1f(diffuseLocation2, diffuse);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -422,4 +438,6 @@ let focusy = 10;
 let focusz = -10;
 let times = 1;
 let deg = 0;
+let ambient = 0.5;
+let diffuse = 0.5;
 setInterval(() => render(), 50);
