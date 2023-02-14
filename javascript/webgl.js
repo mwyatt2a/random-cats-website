@@ -122,12 +122,13 @@ in vec4 position;
 in vec2 vertexTexCoord;
 in vec3 a_normal;
 uniform mat4 transformation;
+uniform mat4 modelInverseTranspose;
 out vec2 fragTexCoord;
 out vec3 v_normal;
 void main() {
     gl_Position = transformation*position;
     fragTexCoord = vertexTexCoord;
-    v_normal = a_normal;
+    v_normal = mat3(modelInverseTranspose)*a_normal;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
@@ -182,12 +183,13 @@ in vec4 position;
 in vec4 backColor;
 in vec3 a_normal;
 uniform mat4 transformation;
+uniform mat4 modelInverseTranspose;
 out vec4 color;
 out vec3 v_normal;
 void main() {
     gl_Position = transformation*position;
     color = backColor;
-    v_normal = a_normal;
+    v_normal = mat3(modelInverseTranspose)*a_normal;
 }`;
 const fragmentShaderSource2 = `#version 300 es
 precision highp float;
@@ -333,6 +335,8 @@ const diffuseLocation = gl.getUniformLocation(program, "diffuse");
 const diffuseLocation2 = gl.getUniformLocation(program2, "diffuse");
 const reversedSunLocation = gl.getUniformLocation(program, "reversedSun");
 const reversedSunLocation2 = gl.getUniformLocation(program2, "reversedSun");
+const modelInverseTransposeLocation = gl.getUniformLocation(program, "modelInverseTranspose");
+const modelInverseTransposeLocation2 = gl.getUniformLocation(program2, "modelInverseTranspose");
 
  
 
@@ -397,6 +401,7 @@ function render() {
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
     let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
+    let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
@@ -407,6 +412,7 @@ function render() {
     gl.uniform1f(ambientLocation, ambient);
     gl.uniform1f(diffuseLocation, diffuse);
     gl.uniform3f(reversedSunLocation, reversedSun[0], reversedSun[1], reversedSun[2]);
+    gl.uniformMatrix4fv(modelInverseTransposeLocation, false, modelInverseTranspose);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -415,6 +421,7 @@ function render() {
     gl.uniform1f(ambientLocation2, ambient);
     gl.uniform1f(diffuseLocation2, diffuse);
     gl.uniform3f(reversedSunLocation2, reversedSun[0], reversedSun[1], reversedSun[2]);
+    gl.uniformMatrix4fv(modelInverseTransposeLocation2, false, modelInverseTranspose);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
