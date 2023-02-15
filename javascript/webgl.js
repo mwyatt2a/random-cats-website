@@ -153,7 +153,7 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), reversedSun);
+    vec3 diffuseReflection = diffuse*outColor.rgb*max(dot(normalize(v_normal), reversedSun), 0.0);
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 function createShader(type, source) {
@@ -202,7 +202,7 @@ out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*dot(normalize(v_normal), reversedSun);
+    vec3 diffuseReflection = diffuse*outColor.rgb*max(dot(normalize(v_normal), reversedSun), 0.0);
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
@@ -451,7 +451,7 @@ let focusy = 10;
 let focusz = -10;
 let times = 1;
 let deg = 0;
-let ambient = 0.0;
-let diffuse = 1.0;
+let ambient = 0.3;
+let diffuse = 0.7;
 let reversedSun = vectorNormalize([1, 1, 1]);
 setInterval(() => render(), 50);
