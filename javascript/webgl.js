@@ -1,4 +1,12 @@
 //Functions and basic setup
+function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
+    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
+    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
+    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
+    return matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))));
+}
 function createCamera(focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz) {
     if (!focus) {
         let camzRotation = [Math.cos(camztheta), Math.sin(camztheta), 0, 0, -Math.sin(camztheta), Math.cos(camztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -13,14 +21,6 @@ function createCamera(focus, camztheta, camytheta, camxtheta, camx, camy, camz, 
         let newY = vectorNormalize(vectorCross(newZ, newX));
         return [newX[0], newZ[1], newZ[2], 0, newY[0], newY[1], newY[2], 0, newZ[0], newZ[1], newZ[2], 0, camx, camy, camz, 1];
     }
-}
-function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
-    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
-    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
-    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
-    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    return matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))));
 }
 function matrixMultiply(A, B) {
     let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -148,14 +148,17 @@ uniform mat4 transformation;
 uniform mat4 modelInverseTranspose;
 uniform vec3 lightbulbPosition;
 uniform mat4 model;
+uniform vec3 cameraPosition;
 out vec2 fragTexCoord;
 out vec3 v_normal;
 out vec3 surfaceToLight;
+out vec3 surfaceToCamera;
 void main() {
     gl_Position = transformation*position;
     fragTexCoord = vertexTexCoord;
     v_normal = mat3(modelInverseTranspose)*a_normal;
     surfaceToLight = lightbulbPosition - (model*position).xyz;
+    surfaceToCamera = cameraPosition - (model*position).xyz;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
@@ -163,10 +166,12 @@ uniform sampler2D texImage;
 uniform float kernel[9];
 uniform float ambient;
 uniform float diffuse;
+uniform float shininess;
 uniform vec3 reversedSun;
 in vec2 fragTexCoord;
 in vec3 v_normal;
 in vec3 surfaceToLight;
+in vec3 surfaceToCamera;
 out vec4 outColor;
 void main() {
     vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
@@ -182,7 +187,9 @@ void main() {
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
     vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
-    outColor = vec4(ambientReflection + diffuseReflection, 1);
+    vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
+    vec3 specularReflection = outColor.rgb*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -214,29 +221,36 @@ uniform mat4 transformation;
 uniform mat4 modelInverseTranspose;
 uniform vec3 lightbulbPosition;
 uniform mat4 model;
+uniform vec3 cameraPosition;
 out vec4 color;
 out vec3 v_normal;
 out vec3 surfaceToLight;
+out vec3 surfaceToCamera;
 void main() {
     gl_Position = transformation*position;
     color = backColor;
     v_normal = mat3(modelInverseTranspose)*a_normal;
     surfaceToLight = lightbulbPosition - (model*position).xyz;
+    surfaceToCamera = cameraPosition - (model*position).xyz;
 }`;
 const fragmentShaderSource2 = `#version 300 es
 precision highp float;
 in vec4 color;
 in vec3 v_normal;
 in vec3 surfaceToLight;
+in vec3 surfaceToCamera;
 uniform float ambient;
 uniform float diffuse;
+uniform float shininess;
 uniform vec3 reversedSun;
 out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
     vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
-    outColor = vec4(ambientReflection + diffuseReflection, 1);
+    vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
+    vec3 specularReflection = outColor.rgb*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
 const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
@@ -374,6 +388,10 @@ const lightbulbPositionLocation = gl.getUniformLocation(program, "lightbulbPosit
 const lightbulbPositionLocation2 = gl.getUniformLocation(program2, "lightbulbPosition");
 const modelLocation = gl.getUniformLocation(program, "model");
 const modelLocation2 = gl.getUniformLocation(program2, "model");
+const cameraPositionLocation = gl.getUniformLocation(program, "cameraPosition");
+const cameraPositionLocation2 = gl.getUniformLocation(program2, "cameraPosition");
+const shininessLocation = gl.getUniformLocation(program, "shininess");
+const shininessLocation2 = gl.getUniformLocation(program2, "shininess");
  
 
 
@@ -452,6 +470,8 @@ function render() {
     gl.uniformMatrix4fv(modelInverseTransposeLocation, false, modelInverseTranspose);
     gl.uniform3f(lightbulbPositionLocation, lightbulb[0], lightbulb[1], lightbulb[2]);
     gl.uniformMatrix4fv(modelLocation, false, model);
+    gl.uniform3f(cameraPositionLocation, camx, camy, camz);
+    gl.uniform1f(shininessLocation, shininess);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -463,6 +483,8 @@ function render() {
     gl.uniformMatrix4fv(modelInverseTransposeLocation2, false, modelInverseTranspose);
     gl.uniform3f(lightbulbPositionLocation2, lightbulb[0], lightbulb[1], lightbulb[2]);
     gl.uniformMatrix4fv(modelLocation2, false, model);
+    gl.uniform3f(cameraPositionLocation2, camx, camy, camz);
+    gl.uniform1f(shininessLocation2, shininess);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -494,6 +516,7 @@ let times = 1;
 let deg = 0;
 let ambient = 0.2;
 let diffuse = 0.8;
+let shininess = 300;
 let reversedSun = vectorNormalize([1, 1, 1]);
 let lightbulb = [-500, -500, 0];
 setInterval(() => render(), 50);
