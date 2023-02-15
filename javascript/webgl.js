@@ -188,7 +188,7 @@ void main() {
     vec3 ambientReflection = ambient*outColor.rgb;
     vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
-    vec3 specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
     outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
 }`;
 function createShader(type, source) {
@@ -249,7 +249,7 @@ void main() {
     vec3 ambientReflection = ambient*outColor.rgb;
     vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
-    vec3 specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
     outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
