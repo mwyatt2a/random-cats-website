@@ -324,7 +324,7 @@ image.onload = () => {
 //Uniforms
 let gaussianBlur = [1/16, 2/16, 1/16, 2/16, 3/16, 2/16, 1/16, 2/16, 1/16];
 let emboss = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
-let normal = [0, 0, 0, 0, 1, 0, 0, 0, 0];
+let normalKernel = [0, 0, 0, 0, 1, 0, 0, 0, 0];
 const kernelLocation = gl.getUniformLocation(program, "kernel");
 const transformationLocation = gl.getUniformLocation(program, "transformation");
 const transformationLocation2 = gl.getUniformLocation(program2, "transformation");
@@ -408,7 +408,7 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.uniform1fv(kernelLocation, emboss);
+    gl.uniform1fv(kernelLocation, normalKernel);
     gl.uniform1f(ambientLocation, ambient);
     gl.uniform1f(diffuseLocation, diffuse);
     gl.uniform3f(reversedSunLocation, reversedSun[0], reversedSun[1], reversedSun[2]);
