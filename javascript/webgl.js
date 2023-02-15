@@ -1,4 +1,12 @@
 //Functions and basic setup
+function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
+    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
+    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
+    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
+    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
+    return matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))));
+}
 function matrixMultiply(A, B) {
     let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     C[0] = A[0]*B[0] + A[4]*B[1] + A[8]*B[2] + A[12]*B[3];
@@ -123,12 +131,16 @@ in vec2 vertexTexCoord;
 in vec3 a_normal;
 uniform mat4 transformation;
 uniform mat4 modelInverseTranspose;
+uniform vec3 lightbulbPosition;
+uniform mat4 model;
 out vec2 fragTexCoord;
 out vec3 v_normal;
+out vec3 surfaceToLight;
 void main() {
     gl_Position = transformation*position;
     fragTexCoord = vertexTexCoord;
     v_normal = mat3(modelInverseTranspose)*a_normal;
+    surfaceToLight = lightbulbPosition - (model*position).xyz;
 }`;
 const fragmentShaderSource = `#version 300 es
 precision highp float;
@@ -139,6 +151,7 @@ uniform float diffuse;
 uniform vec3 reversedSun;
 in vec2 fragTexCoord;
 in vec3 v_normal;
+in vec3 surfaceToLight;
 out vec4 outColor;
 void main() {
     vec2 pixelSize = vec2(1)/vec2(textureSize(texImage, 0));
@@ -153,7 +166,7 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*max(dot(normalize(v_normal), reversedSun), 0.0);
+    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 function createShader(type, source) {
@@ -184,17 +197,22 @@ in vec4 backColor;
 in vec3 a_normal;
 uniform mat4 transformation;
 uniform mat4 modelInverseTranspose;
+uniform vec3 lightbulbPosition;
+uniform mat4 model;
 out vec4 color;
 out vec3 v_normal;
+out vec3 surfaceToLight;
 void main() {
     gl_Position = transformation*position;
     color = backColor;
     v_normal = mat3(modelInverseTranspose)*a_normal;
+    surfaceToLight = lightbulbPosition - (model*position).xyz;
 }`;
 const fragmentShaderSource2 = `#version 300 es
 precision highp float;
 in vec4 color;
 in vec3 v_normal;
+in vec3 surfaceToLight;
 uniform float ambient;
 uniform float diffuse;
 uniform vec3 reversedSun;
@@ -202,7 +220,7 @@ out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*max(dot(normalize(v_normal), reversedSun), 0.0);
+    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
     outColor = vec4(ambientReflection + diffuseReflection, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
@@ -337,7 +355,10 @@ const reversedSunLocation = gl.getUniformLocation(program, "reversedSun");
 const reversedSunLocation2 = gl.getUniformLocation(program2, "reversedSun");
 const modelInverseTransposeLocation = gl.getUniformLocation(program, "modelInverseTranspose");
 const modelInverseTransposeLocation2 = gl.getUniformLocation(program2, "modelInverseTranspose");
-
+const lightbulbPositionLocation = gl.getUniformLocation(program, "lightbulbPosition");
+const lightbulbPositionLocation2 = gl.getUniformLocation(program2, "lightbulbPosition");
+const modelLocation = gl.getUniformLocation(program, "model");
+const modelLocation2 = gl.getUniformLocation(program2, "model");
  
 
 
@@ -402,6 +423,7 @@ function render() {
     gl.drawArrays(primitiveType, offset, count);
     let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
     let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
+    let model = createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
@@ -413,6 +435,8 @@ function render() {
     gl.uniform1f(diffuseLocation, diffuse);
     gl.uniform3f(reversedSunLocation, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.uniformMatrix4fv(modelInverseTransposeLocation, false, modelInverseTranspose);
+    gl.uniform3f(lightbulbPositionLocation, lightbulb[0], lightbulb[1], lightbulb[2]);
+    gl.uniformMatrix4fv(modelLocation, false, model);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -422,6 +446,8 @@ function render() {
     gl.uniform1f(diffuseLocation2, diffuse);
     gl.uniform3f(reversedSunLocation2, reversedSun[0], reversedSun[1], reversedSun[2]);
     gl.uniformMatrix4fv(modelInverseTransposeLocation2, false, modelInverseTranspose);
+    gl.uniform3f(lightbulbPositionLocation2, lightbulb[0], lightbulb[1], lightbulb[2]);
+    gl.uniformMatrix4fv(modelLocation2, false, model);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -451,7 +477,8 @@ let focusy = 10;
 let focusz = -10;
 let times = 1;
 let deg = 0;
-let ambient = 0.35;
-let diffuse = 0.65;
+let ambient = 0.2;
+let diffuse = 0.8;
 let reversedSun = vectorNormalize([1, 1, 1]);
+let lightbulb = [-500, -500, 0];
 setInterval(() => render(), 50);
