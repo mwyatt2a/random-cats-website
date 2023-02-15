@@ -1,4 +1,19 @@
 //Functions and basic setup
+function createCamera(focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz) {
+    if (!focus) {
+        let camzRotation = [Math.cos(camztheta), Math.sin(camztheta), 0, 0, -Math.sin(camztheta), Math.cos(camztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+        let camyRotation = [Math.cos(camytheta), 0, -Math.sin(camytheta), 0, 0, 1, 0, 0, Math.sin(camytheta), 0, Math.cos(camytheta), 0, 0, 0, 0, 1];
+        let camxRotation = [1, 0, 0, 0, 0, Math.cos(camxtheta), Math.sin(camxtheta), 0, 0, -Math.sin(camxtheta), Math.cos(camxtheta), 0, 0, 0, 0, 1];
+        let camtranslation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, camx, camy, camz, 1];
+        return matrixMultiply(camtranslation, matrixMultiply(camxRotation, matrixMultiply(camyRotation, matrixMultiply(camzRotation, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]))));
+    }
+    else {
+        let newZ = vectorNormalize([camx - focusx, camy - focusy, camz - focusz]);
+        let newX = vectorNormalize(vectorCross([0, 1, 0], newZ));
+        let newY = vectorNormalize(vectorCross(newZ, newX));
+        return [newX[0], newZ[1], newZ[2], 0, newY[0], newY[1], newY[2], 0, newZ[0], newZ[1], newZ[2], 0, camx, camy, camz, 1];
+    }
+}
 function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
     let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
