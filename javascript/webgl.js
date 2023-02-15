@@ -168,6 +168,7 @@ uniform float ambient;
 uniform float diffuse;
 uniform float shininess;
 uniform vec3 reversedSun;
+uniform vec3 lightbulbColor;
 in vec2 fragTexCoord;
 in vec3 v_normal;
 in vec3 surfaceToLight;
@@ -186,10 +187,10 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
+    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
     float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
-    outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
+    outColor = vec4(ambientReflection + diffuseReflection + specularReflection*lightbulbColor, 1);
 }`;
 function createShader(type, source) {
     let shader = gl.createShader(type);
@@ -243,14 +244,15 @@ uniform float ambient;
 uniform float diffuse;
 uniform float shininess;
 uniform vec3 reversedSun;
+uniform vec3 lightbulbColor;
 out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0));
+    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
     float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
-    outColor = vec4(ambientReflection + diffuseReflection + specularReflection, 1);
+    outColor = vec4(ambientReflection + diffuseReflection + specularReflection*lightbulbColor, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
 const fragmentShader2 = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource2);
@@ -392,6 +394,8 @@ const cameraPositionLocation = gl.getUniformLocation(program, "cameraPosition");
 const cameraPositionLocation2 = gl.getUniformLocation(program2, "cameraPosition");
 const shininessLocation = gl.getUniformLocation(program, "shininess");
 const shininessLocation2 = gl.getUniformLocation(program2, "shininess");
+const lightbulbColorLocation = gl.getUniformLocation(program, "lightbulbColor");
+const lightbulbColorLocation2 = gl.getUniformLocation(program2, "lightbulbColor");
  
 
 
@@ -472,6 +476,7 @@ function render() {
     gl.uniformMatrix4fv(modelLocation, false, model);
     gl.uniform3f(cameraPositionLocation, camx, camy, camz);
     gl.uniform1f(shininessLocation, shininess);
+    gl.uniform3f(lightbulbColorLocation, lightbulbColor[0], lightbulbColor[1], lightbulbColor[2]);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -485,6 +490,7 @@ function render() {
     gl.uniformMatrix4fv(modelLocation2, false, model);
     gl.uniform3f(cameraPositionLocation2, camx, camy, camz);
     gl.uniform1f(shininessLocation2, shininess);
+    gl.uniform3f(lightbulbColorLocation2, lightbulbColor[0], lightbulbColor[1], lightbulbColor[2]);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -519,4 +525,5 @@ let diffuse = 0.8;
 let shininess = 500;
 let reversedSun = vectorNormalize([1, 1, 1]);
 let lightbulb = [-500, -500, 0];
+let lightbulbColor = [180/255, 100/255, 255/255];
 setInterval(() => render(), 50);
