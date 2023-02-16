@@ -169,6 +169,9 @@ uniform float diffuse;
 uniform float shininess;
 uniform vec3 reversedSun;
 uniform vec3 lightbulbColor;
+uniform vec3 lightbulbDirection;
+uniform float dotLimitUpper;
+uniform float dotLimitLower;
 in vec2 fragTexCoord;
 in vec3 v_normal;
 in vec3 surfaceToLight;
@@ -187,9 +190,11 @@ void main() {
         texture(texImage, fragTexCoord + pixelSize*vec2(1, 1))*kernel[8];
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
+    float dotCheck = dot(normalize(-surfaceToLight), lightbulbDirection);
+    float lightAmount = 1.0;//smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
+    vec3 diffuseReflection = diffuse*outColor.rgb*(0.5*max(dot(normalize(v_normal), reversedSun), 0.0) + lightAmount*max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
-    float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    float specularReflection = lightAmount*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
     outColor = vec4(ambientReflection + diffuseReflection + specularReflection*lightbulbColor, 1);
 }`;
 function createShader(type, source) {
@@ -245,13 +250,18 @@ uniform float diffuse;
 uniform float shininess;
 uniform vec3 reversedSun;
 uniform vec3 lightbulbColor;
+uniform vec3 lightbulbDirection;
+uniform float dotLimitUpper;
+uniform float dotLimitLower;
 out vec4 outColor;
 void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
-    vec3 diffuseReflection = diffuse*outColor.rgb*(max(dot(normalize(v_normal), reversedSun), 0.0) + max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
+    float dotCheck = dot(normalize(-surfaceToLight), lightbulbDirection);
+    float lightAmount = 1.0;//smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
+    vec3 diffuseReflection = diffuse*outColor.rgb*(0.5*max(dot(normalize(v_normal), reversedSun), 0.0) + lightAmount*max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
-    float specularReflection = pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
+    float specularReflection = lightAmount*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
     outColor = vec4(ambientReflection + diffuseReflection + specularReflection*lightbulbColor, 1);
 }`;
 const vertexShader2 = createShader(gl.VERTEX_SHADER, vertexShaderSource2);
@@ -396,6 +406,12 @@ const shininessLocation = gl.getUniformLocation(program, "shininess");
 const shininessLocation2 = gl.getUniformLocation(program2, "shininess");
 const lightbulbColorLocation = gl.getUniformLocation(program, "lightbulbColor");
 const lightbulbColorLocation2 = gl.getUniformLocation(program2, "lightbulbColor");
+const lightbulbDirectionLocation = gl.getUniformLocation(program, "lightbulbDirectionLocation");
+const lightbulbDirectionLocation2 = gl.getUniformLocation(program2, "lightbulbDirectionLocation");
+const dotLimitUpperLocation = gl.getUniformLocation(program, "dotLimitUpper");
+const dotLimitUpperLocation2 = gl.getUniformLocation(program2, "dotLimitUpper");
+const dotLimitLowerLocation = gl.getUniformLocation(program, "dotLimitLower");
+const dotLimitLowerLocation2 = gl.getUniformLocation(program2, "dotLimitLower");
  
 
 
@@ -477,6 +493,9 @@ function render() {
     gl.uniform3f(cameraPositionLocation, camx, camy, camz);
     gl.uniform1f(shininessLocation, shininess);
     gl.uniform3f(lightbulbColorLocation, lightbulbColor[0], lightbulbColor[1], lightbulbColor[2]);
+    gl.uniform3f(lightbulbDirectionLocation, lightbulbDirection[0], lightbulbDirection[1], lightbulbDirection[2]);
+    gl.uniform1f(dotLimitUpperLocation, dotLimitUpper);
+    gl.uniform1f(dotLimitLowerLocation, dotLimitLower);
     gl.drawArrays(primitiveType, offset, count);
 
     gl.useProgram(program2);
@@ -491,6 +510,9 @@ function render() {
     gl.uniform3f(cameraPositionLocation2, camx, camy, camz);
     gl.uniform1f(shininessLocation2, shininess);
     gl.uniform3f(lightbulbColorLocation2, lightbulbColor[0], lightbulbColor[1], lightbulbColor[2]);
+    gl.uniform3f(lightbulbDirectionLocation2, lightbulbDirection[0], lightbulbDirection[1], lightbulbDirection[2]);
+    gl.uniform1f(dotLimitUpperLocation2, dotLimitUpper);
+    gl.uniform1f(dotLimitLowerLocation2, dotLimitLower);
     gl.drawArrays(primitiveType, offset, 30);
 }
 
@@ -524,6 +546,9 @@ let ambient = 0.2;
 let diffuse = 0.8;
 let shininess = 500;
 let reversedSun = vectorNormalize([1, 1, 1]);
-let lightbulb = [-500, -500, 0];
+let lightbulb = [0, 0, 0];
 let lightbulbColor = [180/255, 100/255, 255/255];
+let lightbulbDirection = vectorNormalize([0, 0, -1]);
+let dotLimitUpper = Math.cos(Math.pi/12);
+let dotLimitLower = Math.cos(Math.pi/6);
 setInterval(() => render(), 50);
