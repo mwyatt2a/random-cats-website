@@ -191,7 +191,8 @@ void main() {
     outColor = vec4(colorSum.rgb, 1);
     vec3 ambientReflection = ambient*outColor.rgb;
     float dotCheck = dot(normalize(-surfaceToLight), lightbulbDirection);
-    float lightAmount = smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
+    float distance = length(surfaceToLight)/1000.0;
+    float lightAmount = (1.0/(0.5 + distance*distance))*smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
     vec3 diffuseReflection = diffuse*outColor.rgb*(0.5*max(dot(normalize(v_normal), reversedSun), 0.0) + lightAmount*max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
     float specularReflection = lightAmount*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
@@ -258,7 +259,8 @@ void main() {
     outColor = color;
     vec3 ambientReflection = ambient*outColor.rgb;
     float dotCheck = dot(normalize(-surfaceToLight), lightbulbDirection);
-    float lightAmount = smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
+    float distance = length(surfaceToLight)/1000.0;
+    float lightAmount = (1.0/(0.5 + distance*distance))*smoothstep(dotLimitLower, dotLimitUpper, dotCheck);
     vec3 diffuseReflection = diffuse*outColor.rgb*(0.5*max(dot(normalize(v_normal), reversedSun), 0.0) + lightAmount*max(dot(normalize(v_normal), normalize(surfaceToLight)), 0.0)*lightbulbColor);
     vec3 halfVector = normalize(normalize(surfaceToLight) + normalize(surfaceToCamera));
     float specularReflection = lightAmount*pow(max(dot(normalize(v_normal), halfVector), 0.0), shininess);
