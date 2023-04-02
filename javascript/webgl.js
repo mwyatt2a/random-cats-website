@@ -1,4 +1,4 @@
-import init, { test } from "../rust/pkg/rust.js";
+import init, { test } from "/rust/pkg/rust.js";
 init().then(() => {
     alert(test(5));
 });
