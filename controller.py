@@ -9,7 +9,7 @@ app = Flask(__name__)
 def opening_page_hmtl():
     return send_file("html/page.html", mimetype="text/html")
 
-@app.route("rust/pkg/rust.js")
+@app.route("/rust/pkg/rust.js")
 def wasm():
     return send_file("rust/pkg/rust.js", mimetype="text/javascript")
 
