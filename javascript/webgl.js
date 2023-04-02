@@ -1,3 +1,12 @@
+import init, test from "../rust/pkg/rust.js";
+init().then(() => {
+    alert(test(5));
+});
+
+
+
+
+
 //Functions and basic setup
 function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
