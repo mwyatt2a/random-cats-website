@@ -10,8 +10,12 @@ def opening_page_hmtl():
     return send_file("html/page.html", mimetype="text/html")
 
 @app.route("/rust/pkg/rust.js")
-def wasm():
+def wasmjs():
     return send_file("rust/pkg/rust.js", mimetype="text/javascript")
+
+@app.route("/rust/pkg/rust_bg.wasm")
+def wasm():
+    return send_file("rust/pkg/rust_bg.wasm", mimetype="application/wasm")
 
 @app.route("/test")
 def webgl_html():
