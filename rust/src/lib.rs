@@ -147,7 +147,7 @@ impl GraphicsMatrix {
         }
     }
 
-    pub fn create_rotation_matrix(thetas: &Rotation) -> Self {
+    fn create_rotation_matrix(thetas: &Rotation) -> Self {
         let z_rotation = Self {
             data: [thetas.0.cos(), thetas.0.sin(), 0.0, 0.0, -thetas.0.sin(), thetas.0.cos(), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         };
@@ -157,10 +157,10 @@ impl GraphicsMatrix {
         let x_rotation = Self {
             data: [1.0, 0.0, 0.0, 0.0, 0.0, thetas.2.cos(), thetas.2.sin(), 0.0, 0.0, -thetas.2.sin(), thetas.2.cos(), 0.0, 0.0, 0.0, 0.0, 1.0],
         };
-        x_rotation.multiply(&x_rotation)//.multiply(&y_rotation).multiply(&z_rotation)
+        x_rotation.multiply(&y_rotation).multiply(&z_rotation)
     }
 
-    pub fn create_translation_matrix(trans: &Translation) -> Self {
+    fn create_translation_matrix(trans: &Translation) -> Self {
         Self {
             data: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, trans.0, trans.1, trans.2, 1.0],
         }    
