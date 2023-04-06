@@ -2,7 +2,7 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 init().then(() => {
     console.log(test(5));
     console.log(Translation.js_create(0, 0.5, 6));
-    console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0.5, 6), Translation.js_create(0, 0.5, 6), Location.js_create(0, 0.5, 6)));
+    console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0.5, 6), Translation.js_create(0, 0.5, 6), Location.js_create(0, 0.5, 6)).data);
 });
 
 
