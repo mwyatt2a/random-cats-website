@@ -11,39 +11,39 @@ pub fn test(number: u32) -> String {
 
 //(ztheta, ytheta, xtheta)
 #[wasm_bindgen]
-pub struct Rotation(f64, f64, f64);
+pub struct Rotation(f32, f32, f32);
 
 #[wasm_bindgen]
 impl Rotation {
-    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+    pub fn js_create(zero: f32, one: f32, two: f32) -> Self {
         Self(zero, one, two)
     }
 }
 
 //(xtrans, ytrans, ztrans)
 #[wasm_bindgen]
-pub struct Translation(f64, f64, f64);
+pub struct Translation(f32, f32, f32);
 
 #[wasm_bindgen]
 impl Translation {
-    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+    pub fn js_create(zero: f32, one: f32, two: f32) -> Self {
         Self(zero, one, two)
     }
 }
 
 //(x, y, z)
 #[wasm_bindgen]
-pub struct Location(f64, f64, f64);
+pub struct Location(f32, f32, f32);
 
 #[wasm_bindgen]
 impl Location {
-    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+    pub fn js_create(zero: f32, one: f32, two: f32) -> Self {
         Self(zero, one, two)
     }
 }
 
 //(x, y, z)
-struct GraphicsVector(f64, f64, f64);
+struct GraphicsVector(f32, f32, f32);
 
 impl GraphicsVector {
     fn normalize(&self) -> Self {
@@ -58,13 +58,13 @@ impl GraphicsVector {
 
 #[wasm_bindgen]
 pub struct GraphicsMatrix {
-    data: [f64; 16],
+    data: [f32; 16],
 }
 
 #[wasm_bindgen]
 impl GraphicsMatrix {
 
-    pub fn get_data(&self) -> Vec<f64> {
+    pub fn get_data(&self) -> Vec<f32> {
         Vec::from(self.data)
     }
 
@@ -141,7 +141,7 @@ impl GraphicsMatrix {
         c
     }
 
-    fn create_scaling_matrix(scale: f64) -> Self {
+    fn create_scaling_matrix(scale: f32) -> Self {
         Self {
             data: [scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, 1.0],
         }
@@ -166,7 +166,7 @@ impl GraphicsMatrix {
         }    
     }
 
-    fn create_model_matrix(scale: f64, thetas: &Rotation, trans: &Translation) -> Self {
+    fn create_model_matrix(scale: f32, thetas: &Rotation, trans: &Translation) -> Self {
         Self::create_translation_matrix(trans).multiply(&Self::create_rotation_matrix(&thetas)).multiply(&Self::create_scaling_matrix(scale))
     } 
 
@@ -184,19 +184,19 @@ impl GraphicsMatrix {
         }
     }
 
-    pub fn create_model_inverse_transpose_matrix(scale: f64, thetas: &Rotation, trans: &Translation) -> Self {
+    pub fn create_model_inverse_transpose_matrix(scale: f32, thetas: &Rotation, trans: &Translation) -> Self {
         Self::create_model_matrix(scale, thetas, trans).inverse().transpose()
     }
 
-    fn create_projection_matrix(aspect: f64, field_of_view: f64, near: f64, far: f64) -> Self {
-        let f = (std::f64::consts::PI*0.5 - 0.5*field_of_view).tan();
+    fn create_projection_matrix(aspect: f32, field_of_view: f32, near: f32, far: f32) -> Self {
+        let f = (std::f32::consts::PI*0.5 - 0.5*field_of_view).tan();
         let range_inv = 1.0/(near - far);
         Self {
             data: [f/aspect, 0.0, 0.0, 0.0, 0.0, f, 0.0, 0.0, 0.0, 0.0, (near + far)*range_inv, -1.0, 0.0, 0.0, near*far*range_inv*2.0, 0.0],
         }
     }
 
-    pub fn create_model_view_projection_matrix(scale: f64, thetas: &Rotation, trans: &Translation, look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location, aspect: f64, field_of_view: f64, near: f64, far: f64)  -> Self {
+    pub fn create_model_view_projection_matrix(scale: f32, thetas: &Rotation, trans: &Translation, look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location, aspect: f32, field_of_view: f32, near: f32, far: f32)  -> Self {
     Self::create_projection_matrix(aspect, field_of_view, near, far).multiply(&Self::create_camera_matrix(look_at, cam_thetas, cam_trans, focus_loc).inverse()).multiply(&Self::create_model_matrix(scale, thetas, trans))
     }
 }

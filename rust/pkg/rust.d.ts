@@ -10,9 +10,9 @@ export function test(number: number): string;
 export class GraphicsMatrix {
   free(): void;
 /**
-* @returns {Float64Array}
+* @returns {Float32Array}
 */
-  get_data(): Float64Array;
+  get_data(): Float32Array;
 /**
 * @param {boolean} look_at
 * @param {Rotation} cam_thetas
