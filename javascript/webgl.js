@@ -1,7 +1,8 @@
 import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/rust/pkg/rust.js";
 init().then(() => {
     console.log(test(5));
-    console.log(GraphicsMatrix.create_scaling_matrix(5.5).get_data());
+    console.log(GraphicsMatrix.create_translation_matrix(Translation.js_create(50, 7.9, 23)).get_data());
+    console.log(GraphicsMatrix.create_rotation_matrix(Rotation.js_create(0, 0, 0)).get_data());
     console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0, 0), Translation.js_create(50, 7.9, 23), Location.js_create(0, 0, 0)).get_data());
 });
 

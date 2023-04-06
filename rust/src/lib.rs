@@ -141,7 +141,7 @@ impl GraphicsMatrix {
         }
     }
 
-    fn create_rotation_matrix(thetas: &Rotation) -> Self {
+    pub fn create_rotation_matrix(thetas: &Rotation) -> Self {
         let z_rotation = Self {
             data: [thetas.0.cos(), thetas.0.sin(), 0.0, 0.0, -thetas.0.sin(), thetas.0.cos(), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         };

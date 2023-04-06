@@ -100,11 +100,21 @@ export class GraphicsMatrix {
         }
     }
     /**
-    * @param {number} scale
+    * @param {Rotation} thetas
     * @returns {GraphicsMatrix}
     */
-    static create_scaling_matrix(scale) {
-        const ret = wasm.graphicsmatrix_create_scaling_matrix(scale);
+    static create_rotation_matrix(thetas) {
+        _assertClass(thetas, Rotation);
+        const ret = wasm.graphicsmatrix_create_rotation_matrix(thetas.ptr);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
+    * @param {Translation} trans
+    * @returns {GraphicsMatrix}
+    */
+    static create_translation_matrix(trans) {
+        _assertClass(trans, Translation);
+        const ret = wasm.graphicsmatrix_create_translation_matrix(trans.ptr);
         return GraphicsMatrix.__wrap(ret);
     }
     /**
