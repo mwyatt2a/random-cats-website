@@ -70,7 +70,7 @@ impl GraphicsMatrix {
 
     fn multiply(&self, b: &Self) -> Self {
         let mut c = Self {
-            data: [0.0; 16],
+            data: [1000.0; 16],
         };
         for columns in 0..4 {
             for rows in 0..4 {
