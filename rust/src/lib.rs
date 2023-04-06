@@ -8,15 +8,39 @@ pub fn test(number: u32) -> String {
     }
     init
 }
+
 //(ztheta, ytheta, xtheta)
 #[wasm_bindgen]
-pub struct Rotation(pub f64, pub f64, pub f64);
+pub struct Rotation(f64, f64, f64);
+
+#[wasm_bindgen]
+impl Rotation {
+    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+        Self(zero, one, two)
+    }
+}
+
 //(xtrans, ytrans, ztrans)
 #[wasm_bindgen]
-pub struct Translation(pub f64, pub f64, pub f64);
+pub struct Translation(f64, f64, f64);
+
+#[wasm_bindgen]
+impl Translation {
+    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+        Self(zero, one, two)
+    }
+}
+
 //(x, y, z)
 #[wasm_bindgen]
-pub struct Location(pub f64, pub f64, pub f64);
+pub struct Location(f64, f64, f64);
+
+#[wasm_bindgen]
+impl Location {
+    pub fn js_create(zero: f64, one: f64, two: f64) -> Self {
+        Self(zero, one, two)
+    }
+}
 
 //(x, y, z)
 struct GraphicsVector(f64, f64, f64);

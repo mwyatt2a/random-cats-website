@@ -124,6 +124,13 @@ export class GraphicsMatrix {
 */
 export class Location {
 
+    static __wrap(ptr) {
+        const obj = Object.create(Location.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
     __destroy_into_raw() {
         const ptr = this.ptr;
         this.ptr = 0;
@@ -136,48 +143,26 @@ export class Location {
         wasm.__wbg_location_free(ptr);
     }
     /**
-    * @returns {number}
+    * @param {number} zero
+    * @param {number} one
+    * @param {number} two
+    * @returns {Location}
     */
-    get 0() {
-        const ret = wasm.__wbg_get_location_0(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 0(arg0) {
-        wasm.__wbg_set_location_0(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 1() {
-        const ret = wasm.__wbg_get_location_1(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 1(arg0) {
-        wasm.__wbg_set_location_1(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 2() {
-        const ret = wasm.__wbg_get_location_2(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 2(arg0) {
-        wasm.__wbg_set_location_2(this.ptr, arg0);
+    static js_create(zero, one, two) {
+        const ret = wasm.location_js_create(zero, one, two);
+        return Location.__wrap(ret);
     }
 }
 /**
 */
 export class Rotation {
+
+    static __wrap(ptr) {
+        const obj = Object.create(Rotation.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
 
     __destroy_into_raw() {
         const ptr = this.ptr;
@@ -191,48 +176,26 @@ export class Rotation {
         wasm.__wbg_rotation_free(ptr);
     }
     /**
-    * @returns {number}
+    * @param {number} zero
+    * @param {number} one
+    * @param {number} two
+    * @returns {Rotation}
     */
-    get 0() {
-        const ret = wasm.__wbg_get_location_0(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 0(arg0) {
-        wasm.__wbg_set_location_0(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 1() {
-        const ret = wasm.__wbg_get_location_1(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 1(arg0) {
-        wasm.__wbg_set_location_1(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 2() {
-        const ret = wasm.__wbg_get_location_2(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 2(arg0) {
-        wasm.__wbg_set_location_2(this.ptr, arg0);
+    static js_create(zero, one, two) {
+        const ret = wasm.location_js_create(zero, one, two);
+        return Rotation.__wrap(ret);
     }
 }
 /**
 */
 export class Translation {
+
+    static __wrap(ptr) {
+        const obj = Object.create(Translation.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
 
     __destroy_into_raw() {
         const ptr = this.ptr;
@@ -246,43 +209,14 @@ export class Translation {
         wasm.__wbg_translation_free(ptr);
     }
     /**
-    * @returns {number}
+    * @param {number} zero
+    * @param {number} one
+    * @param {number} two
+    * @returns {Translation}
     */
-    get 0() {
-        const ret = wasm.__wbg_get_location_0(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 0(arg0) {
-        wasm.__wbg_set_location_0(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 1() {
-        const ret = wasm.__wbg_get_location_1(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 1(arg0) {
-        wasm.__wbg_set_location_1(this.ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get 2() {
-        const ret = wasm.__wbg_get_location_2(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set 2(arg0) {
-        wasm.__wbg_set_location_2(this.ptr, arg0);
+    static js_create(zero, one, two) {
+        const ret = wasm.location_js_create(zero, one, two);
+        return Translation.__wrap(ret);
     }
 }
 

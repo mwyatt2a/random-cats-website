@@ -45,42 +45,36 @@ export class GraphicsMatrix {
 export class Location {
   free(): void;
 /**
+* @param {number} zero
+* @param {number} one
+* @param {number} two
+* @returns {Location}
 */
-  0: number;
-/**
-*/
-  1: number;
-/**
-*/
-  2: number;
+  static js_create(zero: number, one: number, two: number): Location;
 }
 /**
 */
 export class Rotation {
   free(): void;
 /**
+* @param {number} zero
+* @param {number} one
+* @param {number} two
+* @returns {Rotation}
 */
-  0: number;
-/**
-*/
-  1: number;
-/**
-*/
-  2: number;
+  static js_create(zero: number, one: number, two: number): Rotation;
 }
 /**
 */
 export class Translation {
   free(): void;
 /**
+* @param {number} zero
+* @param {number} one
+* @param {number} two
+* @returns {Translation}
 */
-  0: number;
-/**
-*/
-  1: number;
-/**
-*/
-  2: number;
+  static js_create(zero: number, one: number, two: number): Translation;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -89,28 +83,13 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly test: (a: number, b: number) => void;
   readonly __wbg_location_free: (a: number) => void;
-  readonly __wbg_get_location_0: (a: number) => number;
-  readonly __wbg_set_location_0: (a: number, b: number) => void;
-  readonly __wbg_get_location_1: (a: number) => number;
-  readonly __wbg_set_location_1: (a: number, b: number) => void;
-  readonly __wbg_get_location_2: (a: number) => number;
-  readonly __wbg_set_location_2: (a: number, b: number) => void;
+  readonly location_js_create: (a: number, b: number, c: number) => number;
   readonly __wbg_graphicsmatrix_free: (a: number) => void;
   readonly graphicsmatrix_create_camera_matrix: (a: number, b: number, c: number, d: number) => number;
   readonly graphicsmatrix_create_model_inverse_transpose_matrix: (a: number, b: number, c: number) => number;
   readonly graphicsmatrix_create_model_view_projection_matrix: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => number;
-  readonly __wbg_set_translation_0: (a: number, b: number) => void;
-  readonly __wbg_set_translation_1: (a: number, b: number) => void;
-  readonly __wbg_set_translation_2: (a: number, b: number) => void;
-  readonly __wbg_set_rotation_0: (a: number, b: number) => void;
-  readonly __wbg_set_rotation_1: (a: number, b: number) => void;
-  readonly __wbg_set_rotation_2: (a: number, b: number) => void;
-  readonly __wbg_get_translation_0: (a: number) => number;
-  readonly __wbg_get_translation_1: (a: number) => number;
-  readonly __wbg_get_translation_2: (a: number) => number;
-  readonly __wbg_get_rotation_0: (a: number) => number;
-  readonly __wbg_get_rotation_1: (a: number) => number;
-  readonly __wbg_get_rotation_2: (a: number) => number;
+  readonly translation_js_create: (a: number, b: number, c: number) => number;
+  readonly rotation_js_create: (a: number, b: number, c: number) => number;
   readonly __wbg_translation_free: (a: number) => void;
   readonly __wbg_rotation_free: (a: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
