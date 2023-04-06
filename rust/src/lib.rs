@@ -135,7 +135,7 @@ impl GraphicsMatrix {
         c
     }
 
-    pub fn create_scaling_matrix(scale: f64) -> Self {
+    fn create_scaling_matrix(scale: f64) -> Self {
         Self {
             data: [scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, 1.0],
         }
@@ -154,7 +154,7 @@ impl GraphicsMatrix {
         x_rotation.multiply(&y_rotation).multiply(&z_rotation)
     }
 
-    fn create_translation_matrix(trans: &Translation) -> Self {
+    pub fn create_translation_matrix(trans: &Translation) -> Self {
         Self {
             data: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, trans.0, trans.1, trans.2, 1.0],
         }    
