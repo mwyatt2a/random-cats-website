@@ -63,6 +63,11 @@ pub struct GraphicsMatrix {
 
 #[wasm_bindgen]
 impl GraphicsMatrix {
+
+    pub fn get_data(&self) -> Vec<f64> {
+        Vec::from(self.data)
+    }
+
     fn multiply(&self, b: &Self) -> Self {
         let mut c = Self {
             data: [0.0; 16],
