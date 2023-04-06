@@ -1,14 +1,10 @@
 import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/rust/pkg/rust.js";
-init().then(() => {
-    console.log(test(5));
-    console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0, 0), Translation.js_create(50, 7.9, 23), Location.js_create(0, 0, 0)).get_data());
-});
-
 
 
 
 
 //Functions and basic setup
+
 function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
     let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
     let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -486,7 +482,10 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
+//    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
+
+    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Tramslation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+
     let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     let model = createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
@@ -563,4 +562,8 @@ let lightbulbColor = [180/255, 100/255, 255/255];
 let lightbulbDirection = vectorNormalize([0, 0, -1]);
 let dotLimitUpper = Math.cos(Math.PI/12);
 let dotLimitLower = Math.cos(Math.PI/6);
-setInterval(() => render(), 50);
+init().then(() => {
+    console.log(test(5));
+    console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0, 0), Translation.js_create(50, 7.9, 23), Location.js_create(0, 0, 0)).get_data());
+    setInterval(() => render(), 50);
+});
