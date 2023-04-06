@@ -100,6 +100,14 @@ export class GraphicsMatrix {
         }
     }
     /**
+    * @param {number} scale
+    * @returns {GraphicsMatrix}
+    */
+    static create_scaling_matrix(scale) {
+        const ret = wasm.graphicsmatrix_create_scaling_matrix(scale);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
     * @param {boolean} look_at
     * @param {Rotation} cam_thetas
     * @param {Translation} cam_trans
