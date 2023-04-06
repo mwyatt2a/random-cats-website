@@ -482,13 +482,17 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-//    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
+    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
 
-    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+    let transformationMatrix2 = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
 
     let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     let model = createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
+    console.log("start");
+    console.log(transformationMatrix);
+    console.log(transformationMatrix2);
+    console.log("end");
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -565,5 +569,5 @@ let dotLimitLower = Math.cos(Math.PI/6);
 init().then(() => {
     console.log(test(5));
     console.log(GraphicsMatrix.create_camera_matrix(false, Rotation.js_create(0, 0, 0), Translation.js_create(50, 7.9, 23), Location.js_create(0, 0, 0)).get_data());
-    setInterval(() => render(), 50);
+    setInterval(() => render(), 5000);
 });
