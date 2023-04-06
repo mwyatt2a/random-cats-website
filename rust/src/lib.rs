@@ -74,9 +74,15 @@ impl GraphicsMatrix {
         };
         for columns in 0..4 {
             for rows in 0..4 {
-                for index in 0..4 {
-                    c.data[rows*4 + columns] = self.data[rows*4 + index]*b.data[columns + index*4];
-                }
+                let mut total = 0.0;
+                let mut index = 0;
+                c.data[rows*4 + columns] = loop {
+                    if index == 4 {
+                        break total;
+                    }
+                    total += self.data[rows*4 + index]*b.data[columns + index*4];
+                    index += 1;
+                };
             }
         }
         c
