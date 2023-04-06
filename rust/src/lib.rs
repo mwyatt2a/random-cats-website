@@ -135,7 +135,7 @@ impl GraphicsMatrix {
         c
     }
 
-    fn create_scaling_matrix(scale: f64) -> Self {
+    pub fn create_scaling_matrix(scale: f64) -> Self {
         Self {
             data: [scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, scale, 0.0, 0.0, 0.0, 0.0, 1.0],
         }
