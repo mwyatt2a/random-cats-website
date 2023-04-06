@@ -1,6 +1,8 @@
-import init, { test } from "/rust/pkg/rust.js";
+import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/rust/pkg/rust.js";
 init().then(() => {
     alert(test(5));
+    alert(new Translation(2.4, 0, 5));
+    alert(GraphicsMatrix.create_camera_matrix(false, new Rotation(0, 0, 0), new Translation(0, 0, 0), new Location(0,0,0)));
 });
 
 

@@ -1,14 +1,5 @@
 let wasm;
 
-let cachedInt32Memory0 = null;
-
-function getInt32Memory0() {
-    if (cachedInt32Memory0 === null || cachedInt32Memory0.byteLength === 0) {
-        cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
-    }
-    return cachedInt32Memory0;
-}
-
 const cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
 
 cachedTextDecoder.decode();
@@ -25,6 +16,15 @@ function getUint8Memory0() {
 function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
+
+let cachedInt32Memory0 = null;
+
+function getInt32Memory0() {
+    if (cachedInt32Memory0 === null || cachedInt32Memory0.byteLength === 0) {
+        cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
+    }
+    return cachedInt32Memory0;
+}
 /**
 * @param {number} number
 * @returns {string}
@@ -39,6 +39,250 @@ export function test(number) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
         wasm.__wbindgen_free(r0, r1);
+    }
+}
+
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
+    return instance.ptr;
+}
+/**
+*/
+export class GraphicsMatrix {
+
+    static __wrap(ptr) {
+        const obj = Object.create(GraphicsMatrix.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_graphicsmatrix_free(ptr);
+    }
+    /**
+    * @param {boolean} look_at
+    * @param {Rotation} cam_thetas
+    * @param {Translation} cam_trans
+    * @param {Location} focus_loc
+    * @returns {GraphicsMatrix}
+    */
+    static create_camera_matrix(look_at, cam_thetas, cam_trans, focus_loc) {
+        _assertClass(cam_thetas, Rotation);
+        _assertClass(cam_trans, Translation);
+        _assertClass(focus_loc, Location);
+        const ret = wasm.graphicsmatrix_create_camera_matrix(look_at, cam_thetas.ptr, cam_trans.ptr, focus_loc.ptr);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
+    * @param {number} scale
+    * @param {Rotation} thetas
+    * @param {Translation} trans
+    * @returns {GraphicsMatrix}
+    */
+    static create_model_inverse_transpose_matrix(scale, thetas, trans) {
+        _assertClass(thetas, Rotation);
+        _assertClass(trans, Translation);
+        const ret = wasm.graphicsmatrix_create_model_inverse_transpose_matrix(scale, thetas.ptr, trans.ptr);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
+    * @param {number} scale
+    * @param {Rotation} thetas
+    * @param {Translation} trans
+    * @param {boolean} look_at
+    * @param {Rotation} cam_thetas
+    * @param {Translation} cam_trans
+    * @param {Location} focus_loc
+    * @param {number} aspect
+    * @param {number} field_of_view
+    * @param {number} near
+    * @param {number} far
+    * @returns {GraphicsMatrix}
+    */
+    static create_model_view_projection_matrix(scale, thetas, trans, look_at, cam_thetas, cam_trans, focus_loc, aspect, field_of_view, near, far) {
+        _assertClass(thetas, Rotation);
+        _assertClass(trans, Translation);
+        _assertClass(cam_thetas, Rotation);
+        _assertClass(cam_trans, Translation);
+        _assertClass(focus_loc, Location);
+        const ret = wasm.graphicsmatrix_create_model_view_projection_matrix(scale, thetas.ptr, trans.ptr, look_at, cam_thetas.ptr, cam_trans.ptr, focus_loc.ptr, aspect, field_of_view, near, far);
+        return GraphicsMatrix.__wrap(ret);
+    }
+}
+/**
+*/
+export class Location {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_location_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get 0() {
+        const ret = wasm.__wbg_get_location_0(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 0(arg0) {
+        wasm.__wbg_set_location_0(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 1() {
+        const ret = wasm.__wbg_get_location_1(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 1(arg0) {
+        wasm.__wbg_set_location_1(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 2() {
+        const ret = wasm.__wbg_get_location_2(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 2(arg0) {
+        wasm.__wbg_set_location_2(this.ptr, arg0);
+    }
+}
+/**
+*/
+export class Rotation {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_rotation_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get 0() {
+        const ret = wasm.__wbg_get_location_0(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 0(arg0) {
+        wasm.__wbg_set_location_0(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 1() {
+        const ret = wasm.__wbg_get_location_1(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 1(arg0) {
+        wasm.__wbg_set_location_1(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 2() {
+        const ret = wasm.__wbg_get_location_2(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 2(arg0) {
+        wasm.__wbg_set_location_2(this.ptr, arg0);
+    }
+}
+/**
+*/
+export class Translation {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_translation_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get 0() {
+        const ret = wasm.__wbg_get_location_0(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 0(arg0) {
+        wasm.__wbg_set_location_0(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 1() {
+        const ret = wasm.__wbg_get_location_1(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 1(arg0) {
+        wasm.__wbg_set_location_1(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get 2() {
+        const ret = wasm.__wbg_get_location_2(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set 2(arg0) {
+        wasm.__wbg_set_location_2(this.ptr, arg0);
     }
 }
 
@@ -76,6 +320,9 @@ async function load(module, imports) {
 function getImports() {
     const imports = {};
     imports.wbg = {};
+    imports.wbg.__wbindgen_throw = function(arg0, arg1) {
+        throw new Error(getStringFromWasm0(arg0, arg1));
+    };
 
     return imports;
 }
