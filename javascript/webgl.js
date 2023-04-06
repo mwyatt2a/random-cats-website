@@ -484,7 +484,7 @@ function render() {
     gl.drawArrays(primitiveType, offset, count);
 //    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
 
-    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Tramslation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
 
     let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
     let model = createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
