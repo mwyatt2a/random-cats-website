@@ -1,9 +1,9 @@
 import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/rust/pkg/rust.js";
 init().then(() => {
     let translation = new Translation();
-    translation.set0 = 5;
-    translation.set1 = 0;
-    translation.set2 = 5.7;
+    translation.0 = 5;
+    translation.1 = 0;
+    translation.2 = 5.7;
     console.log(test(5));
     console.log(translation);
     console.log(GraphicsMatrix.create_camera_matrix(false, new Rotation(), new Translation(), new Location()));
