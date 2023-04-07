@@ -176,7 +176,7 @@ impl GraphicsMatrix {
             Self::create_model_matrix(1.0, cam_thetas, cam_trans)
         }
         else {
-            let new_z = GraphicsVector(cam_trans.0 - focus_loc.0, cam_trans.1 - focus_loc.1, cam_trans.2 - focus_loc.2);
+            let new_z = GraphicsVector(cam_trans.0 - focus_loc.0, cam_trans.1 - focus_loc.1, cam_trans.2 - focus_loc.2).normalize();
             let new_x = GraphicsVector(0.0, 1.0, 0.0).cross_product(&new_z).normalize();
             let new_y = new_z.cross_product(&new_x).normalize();
             Self {
