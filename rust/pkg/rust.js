@@ -100,6 +100,18 @@ export class GraphicsMatrix {
         }
     }
     /**
+    * @param {number} scale
+    * @param {Rotation} thetas
+    * @param {Translation} trans
+    * @returns {GraphicsMatrix}
+    */
+    static create_model_matrix(scale, thetas, trans) {
+        _assertClass(thetas, Rotation);
+        _assertClass(trans, Translation);
+        const ret = wasm.graphicsmatrix_create_model_matrix(scale, thetas.ptr, trans.ptr);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
     * @param {boolean} look_at
     * @param {Rotation} cam_thetas
     * @param {Translation} cam_trans

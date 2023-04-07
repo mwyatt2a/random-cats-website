@@ -68,6 +68,7 @@ impl GraphicsMatrix {
         Vec::from(self.data)
     }
 
+    //columns and rows swapped to compensate for column major order
     fn multiply(&self, b: &Self) -> Self {
         let mut c = Self {
             data: [0.0; 16],
@@ -76,11 +77,11 @@ impl GraphicsMatrix {
             for rows in 0..4 {
                 let mut total = 0.0;
                 let mut index = 0;
-                c.data[rows*4 + columns] = loop {
+                c.data[columns*4 + rows] = loop {
                     if index == 4 {
                         break total;
                     }
-                    total += self.data[rows*4 + index]*b.data[columns + index*4];
+                    total += self.data[rows + index*4]*b.data[columns*4 + index];
                     index += 1;
                 };
             }
@@ -166,7 +167,7 @@ impl GraphicsMatrix {
         }    
     }
 
-    fn create_model_matrix(scale: f32, thetas: &Rotation, trans: &Translation) -> Self {
+    pub fn create_model_matrix(scale: f32, thetas: &Rotation, trans: &Translation) -> Self {
         Self::create_translation_matrix(trans).multiply(&Self::create_rotation_matrix(&thetas)).multiply(&Self::create_scaling_matrix(scale))
     } 
 
