@@ -5,136 +5,11 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 //Functions and basic setup
 
-function createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
-    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
-    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
-    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
-    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    return matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))));
-}
-function createCamera(focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz) {
-    if (!focus) {
-        let camzRotation = [Math.cos(camztheta), Math.sin(camztheta), 0, 0, -Math.sin(camztheta), Math.cos(camztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-        let camyRotation = [Math.cos(camytheta), 0, -Math.sin(camytheta), 0, 0, 1, 0, 0, Math.sin(camytheta), 0, Math.cos(camytheta), 0, 0, 0, 0, 1];
-        let camxRotation = [1, 0, 0, 0, 0, Math.cos(camxtheta), Math.sin(camxtheta), 0, 0, -Math.sin(camxtheta), Math.cos(camxtheta), 0, 0, 0, 0, 1];
-        let camtranslation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, camx, camy, camz, 1];
-        return matrixMultiply(camtranslation, matrixMultiply(camxRotation, matrixMultiply(camyRotation, matrixMultiply(camzRotation, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]))));
-    }
-    else {
-        let newZ = vectorNormalize([camx - focusx, camy - focusy, camz - focusz]);
-        let newX = vectorNormalize(vectorCross([0, 1, 0], newZ));
-        let newY = vectorNormalize(vectorCross(newZ, newX));
-        return [newX[0], newZ[1], newZ[2], 0, newY[0], newY[1], newY[2], 0, newZ[0], newZ[1], newZ[2], 0, camx, camy, camz, 1];
-    }
-}
-function matrixMultiply(A, B) {
-    let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    C[0] = A[0]*B[0] + A[4]*B[1] + A[8]*B[2] + A[12]*B[3];
-    C[1] = A[1]*B[0] + A[5]*B[1] + A[9]*B[2] + A[13]*B[3];
-    C[2] = A[2]*B[0] + A[6]*B[1] + A[10]*B[2] + A[14]*B[3];
-    C[3] = A[3]*B[0] + A[7]*B[1] + A[11]*B[2] + A[15]*B[3];
-    C[4] = A[0]*B[4] + A[4]*B[5] + A[8]*B[6] + A[12]*B[7];
-    C[5] = A[1]*B[4] + A[5]*B[5] + A[9]*B[6] + A[13]*B[7];
-    C[6] = A[2]*B[4] + A[6]*B[5] + A[10]*B[6] + A[14]*B[7];
-    C[7] = A[3]*B[4] + A[7]*B[5] + A[11]*B[6] + A[15]*B[7];
-    C[8] = A[0]*B[8] + A[4]*B[9] + A[8]*B[10] + A[12]*B[11];
-    C[9] = A[1]*B[8] + A[5]*B[9] + A[9]*B[10] + A[13]*B[11];
-    C[10] = A[2]*B[8] + A[6]*B[9] + A[10]*B[10] + A[14]*B[11];
-    C[11] = A[3]*B[8] + A[7]*B[9] + A[11]*B[10] + A[15]*B[11];
-    C[12] = A[0]*B[12] + A[4]*B[13] + A[8]*B[14] + A[12]*B[15];
-    C[13] = A[1]*B[12] + A[5]*B[13] + A[9]*B[14] + A[13]*B[15];
-    C[14] = A[2]*B[12] + A[6]*B[13] + A[10]*B[14] + A[14]*B[15];
-    C[15] = A[3]*B[12] + A[7]*B[13] + A[11]*B[14] + A[15]*B[15];
-    return C;
-}
-function matrixTranspose(A) {
-    return [A[0], A[4], A[8], A[12], A[1], A[5], A[9], A[13], A[2], A[6], A[10], A[14], A[3], A[7], A[11], A[15]];
-}
-function createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans) {
-    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
-    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
-    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
-    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    return matrixTranspose(matrixInverse(matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
-}
-function matrixInverse(A) {
-    let f = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    f[0] = A[10]*A[15] - A[11]*A[14];
-    f[1] = A[9]*A[15] - A[11]*A[13];
-    f[2] = A[9]*A[14] - A[10]*A[13];
-    f[3] = A[6]*A[15] - A[7]*A[14];
-    f[4] = A[5]*A[15] - A[7]*A[13];
-    f[5] = A[5]*A[14] - A[6]*A[13];
-    f[6] = A[6]*A[11] - A[7]*A[10];
-    f[7] = A[5]*A[11] - A[7]*A[9];
-    f[8] = A[5]*A[10] - A[6]*A[9];
-    f[9] = A[8]*A[15] - A[11]*A[12];
-    f[10] = A[8]*A[14] - A[10]*A[12];
-    f[11] = A[4]*A[15] - A[7]*A[12];
-    f[12] = A[4]*A[14] - A[6]*A[12];
-    f[13] = A[4]*A[11] - A[11]*A[8];
-    f[14] = A[4]*A[10] - A[6]*A[8];
-    f[15] = A[8]*A[13] - A[9]*A[12];
-    f[16] = A[4]*A[13] - A[5]*A[12];
-    f[17] = A[4]*A[9] - A[5]*A[8];
-    let C = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    C[0] = A[5]*f[0] - A[6]*f[1] + A[7]*f[2];
-    C[1] = -A[1]*f[0] + A[2]*f[1] - A[3]*f[2];
-    C[2] = A[1]*f[3] - A[2]*f[4] + A[3]*f[5];
-    C[3] = -A[1]*f[6] + A[2]*f[7] - A[3]*f[8];
-    C[4] = -A[4]*f[0] + A[6]*f[9] - A[7]*f[10];
-    C[5] = A[0]*f[0] - A[2]*f[9] + A[3]*f[10];
-    C[6] = -A[0]*f[3] + A[2]*f[11] - A[3]*f[12];
-    C[7] = A[0]*f[6] - A[2]*f[13] + A[3]*f[14];
-    C[8] = A[4]*f[1] - A[5]*f[9] + A[7]*f[15];
-    C[9] = -A[0]*f[1] + A[1]*f[9] - A[3]*f[15];
-    C[10] = A[0]*f[4] - A[1]*f[11] + A[3]*f[16];
-    C[11] = -A[0]*f[7] + A[1]*f[13] - A[3]*f[17];
-    C[12] = -A[4]*f[2] + A[5]*f[10] - A[6]*f[15];
-    C[13] = A[0]*f[2] - A[1]*f[10] + A[2]*f[15];
-    C[14] = -A[0]*f[5] + A[1]*f[12] - A[2]*f[16];
-    C[15] = A[0]*f[8] - A[1]*f[14] + A[2]*f[17];
-    let determinant = A[0]*C[0] + A[1]*C[4] + A[2]*C[8] + A[3]*C[12];
-    for (let i = 0; i < 16; i++) {
-        C[i] = C[i]/determinant;
-    }
-    return C;
-}
 function vectorNormalize(v) {
     let magnitude = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]); 
     return [v[0]/magnitude, v[1]/magnitude, v[2]/magnitude];
 }
-function vectorCross(v1, v2) {
-    return [v1[1]*v2[2] - v1[2]*v2[1], v1[2]*v2[0] - v1[0]*v2[2], v1[0]*v2[1] - v1[1]*v2[0]];
-}
-function createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, fieldOfView, near, far, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz) {
-    let scaling = [scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1];
-    let zRotation = [Math.cos(ztheta), Math.sin(ztheta), 0, 0, -Math.sin(ztheta), Math.cos(ztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    let yRotation = [Math.cos(ytheta), 0, -Math.sin(ytheta), 0, 0, 1, 0, 0, Math.sin(ytheta), 0, Math.cos(ytheta), 0, 0, 0, 0, 1];
-    let xRotation = [1, 0, 0, 0, 0, Math.cos(xtheta), Math.sin(xtheta), 0, 0, -Math.sin(xtheta), Math.cos(xtheta), 0, 0, 0, 0, 1];
-    let translation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, xtrans, ytrans, ztrans, 1];
-    let cameraMatrix = [];
-    if (!focus) {
-        let camzRotation = [Math.cos(camztheta), Math.sin(camztheta), 0, 0, -Math.sin(camztheta), Math.cos(camztheta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-        let camyRotation = [Math.cos(camytheta), 0, -Math.sin(camytheta), 0, 0, 1, 0, 0, Math.sin(camytheta), 0, Math.cos(camytheta), 0, 0, 0, 0, 1];
-        let camxRotation = [1, 0, 0, 0, 0, Math.cos(camxtheta), Math.sin(camxtheta), 0, 0, -Math.sin(camxtheta), Math.cos(camxtheta), 0, 0, 0, 0, 1];
-        let camtranslation = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, camx, camy, camz, 1];
-        cameraMatrix = matrixMultiply(camtranslation, matrixMultiply(camxRotation, matrixMultiply(camyRotation, matrixMultiply(camzRotation, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]))));
-    }
-    else {
-        let newZ = vectorNormalize([camx - focusx, camy - focusy, camz - focusz]);
-        let newX = vectorNormalize(vectorCross([0, 1, 0], newZ));
-        let newY = vectorNormalize(vectorCross(newZ, newX));
-        cameraMatrix = [newX[0], newZ[1], newZ[2], 0, newY[0], newY[1], newY[2], 0, newZ[0], newZ[1], newZ[2], 0, camx, camy, camz, 1];
-    }
-    let viewMatrix = matrixInverse(cameraMatrix);
-    let f = Math.tan(Math.PI*0.5 -0.5*fieldOfView);
-    let rangeInv = 1.0/(near - far);
-    let projection = [f/aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (near + far)*rangeInv, -1, 0, 0, near*far*rangeInv*2, 0];
-    return matrixMultiply(projection, matrixMultiply(viewMatrix, matrixMultiply(translation, matrixMultiply(xRotation, matrixMultiply(yRotation, matrixMultiply(zRotation, scaling))))));
-}
+
 const canvas = document.querySelector("#webgl");
 const gl = canvas.getContext("webgl2");
 if (gl == null) {
@@ -482,13 +357,9 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-//    let transformationMatrix = GraphicsMatrix.create_model_matrix(0.001, Rotation.js_create(0, 0, 0), Translation.js_create(0, 0, -0.2)).get_data();
-//    let transformationMatrix = createTransformationMatrix(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans, aspect, Math.PI/3, 10, 2000, focus, camztheta, camytheta, camxtheta, camx, camy, camz, focusx, focusy, focusz);
-
     let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
-
-    let modelInverseTranspose = createModelInverseTranspose(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
-    let model = createModel(scale, ztheta, ytheta, xtheta, xtrans, ytrans, ztrans);
+    let modelInverseTranspose = GraphicsMatrix.create_model_inverse_transpose_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
+    let model = GraphicsMatrix.create_model_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture2);

@@ -46,7 +46,7 @@ impl Location {
 struct GraphicsVector(f32, f32, f32);
 
 impl GraphicsVector {
-    fn normalize(&self) -> Self {
+    pub fn normalize(&self) -> Self {
        let magnitude = (self.0*self.0 + self.1*self.1 + self.2*self.2).sqrt();
         Self(self.0/magnitude, self.1/magnitude, self.2/magnitude) 
     }
@@ -171,7 +171,7 @@ impl GraphicsMatrix {
         Self::create_translation_matrix(trans).multiply(&Self::create_rotation_matrix(&thetas)).multiply(&Self::create_scaling_matrix(scale))
     } 
 
-    pub fn create_camera_matrix(look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location) -> Self {
+    fn create_camera_matrix(look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location) -> Self {
         if !look_at {
             Self::create_model_matrix(1.0, cam_thetas, cam_trans)
         }
