@@ -180,7 +180,7 @@ impl GraphicsMatrix {
             let new_x = GraphicsVector(0.0, 1.0, 0.0).cross_product(&new_z).normalize();
             let new_y = new_z.cross_product(&new_x).normalize();
             Self {
-                data: [new_x.0, new_z.1, new_x.2, 0.0, new_y.0, new_y.1, new_y.2, 0.0, new_z.0, new_z.1, new_z.2, 0.0, cam_trans.0, cam_trans.1, cam_trans.2, 1.0],
+                data: [new_x.0, new_x.1, new_x.2, 0.0, new_y.0, new_y.1, new_y.2, 0.0, new_z.0, new_z.1, new_z.2, 0.0, cam_trans.0, cam_trans.1, cam_trans.2, 1.0],
             }
         }
     }
