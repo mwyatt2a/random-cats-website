@@ -2,6 +2,22 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 
 //Functions and basic setup
+function turnOn(option) {
+    switch option {
+        case "animate":
+            animate = !animate;
+            break;
+        case "gaussian_blur":
+            gaussian_blur = !gaussian_blur;
+            break;
+        case "emboss":
+            emboss = !emboss;
+            break;
+        case "track":
+            track = !track;
+            break;
+    }
+}
 
 function vectorNormalize(v) {
     let magnitude = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]); 
@@ -13,9 +29,9 @@ const gl = canvas.getContext("webgl2");
 if (gl == null) {
     document.querySelector("h2").innerHTML = "WebGL is not supported by your browers. Cannot Render Animation.";
 }
-window.addEventListener("keydown", success);
+window.addEventListener("keydown", keyInput);
 
-function success(e) {
+function keyInput(e) {
     switch (e.keyCode) {
         case 81: {
             console.log("q");
@@ -48,7 +64,7 @@ function success(e) {
             break;
         }
         default: {
-            console.log("other");
+            console.log(e.keyCode);
         }
     }
 }
@@ -351,10 +367,6 @@ function render() {
         times *= -1;
         cameraLoop++;
     }
-    if (cameraLoop >= 10) {
-        cameraLoop = 0;
-        focus = !focus;
-    }
     loop++;
     xtrans += times*5;
     ytrans += times*5;
@@ -391,7 +403,7 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), focus, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), track, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
     let modelInverseTranspose = GraphicsMatrix.create_model_inverse_transpose_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     let model = GraphicsMatrix.create_model_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
@@ -438,6 +450,10 @@ function render() {
 
 
 //Main Code
+let animate = false;
+let gaussian_blur = false;
+let emboss = false;
+let track = false;
 let xtrans = 0;
 let ytrans = 0;
 let ztrans = -1000;
@@ -447,7 +463,6 @@ let xtheta = 0//-Math.PI/2;
 let scale = 1;
 let loop = 0;
 let cameraLoop = 0;
-let focus = false;
 let camztheta = 0;
 let camytheta = 0;
 let camxtheta = 0;
