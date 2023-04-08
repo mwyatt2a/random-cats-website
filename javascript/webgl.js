@@ -3,7 +3,7 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 //Functions and basic setup
 function turnOn(option) {
-    switch option {
+    switch (option) {
         case "animate":
             animate = !animate;
             break;
