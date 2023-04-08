@@ -5,16 +5,16 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 function turnOn(option) {
     switch (option) {
         case "animate":
-            animate = !animate;
+            animateOn = !animateOn;
             break;
         case "gaussian_blur":
-            gaussian_blur = !gaussian_blur;
+            gaussian_blurOn = !gaussian_blurOn;
             break;
         case "emboss":
-            emboss = !emboss;
+            embossOn = !embossON;
             break;
         case "track":
-            track = !track;
+            trackOn = !trackOn;
             break;
     }
 }
@@ -403,7 +403,7 @@ function render() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
     gl.uniform1fv(kernelLocation, emboss);
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), track, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), trackOn, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
     let modelInverseTranspose = GraphicsMatrix.create_model_inverse_transpose_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     let model = GraphicsMatrix.create_model_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
@@ -450,10 +450,10 @@ function render() {
 
 
 //Main Code
-let animate = false;
-let gaussian_blur = false;
-let emboss = false;
-let track = false;
+let animateOn = false;
+let gaussian_blurOn = false;
+let embossOn = false;
+let trackOn = false;
 let xtrans = 0;
 let ytrans = 0;
 let ztrans = -1000;
