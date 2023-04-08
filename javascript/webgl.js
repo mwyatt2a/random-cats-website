@@ -1,8 +1,6 @@
 import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/rust/pkg/rust.js";
 
 
-
-
 //Functions and basic setup
 
 function vectorNormalize(v) {
@@ -15,9 +13,45 @@ const gl = canvas.getContext("webgl2");
 if (gl == null) {
     document.querySelector("h2").innerHTML = "WebGL is not supported by your browers. Cannot Render Animation.";
 }
+window.addEventListener("keydown", success);
 
-
-
+function success(e) {
+    switch (e.keyCode) {
+        case 81: {
+            console.log("q");
+            camy += 100;
+            break;
+        }
+        case 87: {
+            console.log("w");
+            camz -= 100;
+            break;
+        }
+        case 69: {
+            console.log("e");
+            camy -= 100;
+            break;
+        }
+        case 65: {
+            console.log("a");
+            camx -= 100;
+            break;
+        }
+        case 83: {
+            console.log("s");
+            camz += 100;
+            break;
+        }
+        case 68: {
+            console.log("d");
+            camx += 100;
+            break;
+        }
+        default: {
+            console.log("other");
+        }
+    }
+}
 
 
 //Shaders and their setup
@@ -329,13 +363,13 @@ function render() {
     ytheta += times*5*4*Math.PI/360;
     xtheta += times*5*2*Math.PI/360;
     scale += -times*0.01;
-    camztheta = 0;
-    camytheta = 0;
-    camxtheta = 0;
+//    camztheta = 0;
+//    camytheta = 0;
+//    camxtheta = 0;
     deg += 16*Math.PI/360;
-    camx = 500*Math.cos(deg);
-    camy = 0;
-    camz = -500*Math.sin(deg);
+//    camx = 500*Math.cos(deg);
+//    camy = 0;
+//    camz = -500*Math.sin(deg);
     focusx = xtrans;
     focusy = ytrans;
     focusz = ztrans;
