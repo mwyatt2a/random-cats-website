@@ -2,7 +2,7 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 
 //Functions and basic setup
-function turnOn(option) {
+function toggleModifier(option) {
     switch (option) {
         case "animate":
             animateOn = !animateOn;
