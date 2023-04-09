@@ -33,26 +33,26 @@
                 </header>
                 <canvas id="webgl"></canvas>
             </article>
-<!--            <section>
+            <section>
                 <header>
                     <h3>Controls</h3>
                 </header>
                 <ul>
-                    <li>
-                        <button title="Truns on animation of object" onclick="toggleModifier('animate')">Animate</button>
+<!--                    <li>
+                        <button title="Truns on animation of object" onclick="window.toggleModifier('animate')">Animate</button>
                     </li>
                     <li>
-                        <button title="Applies gaussian blur to the object" onclick="toggleModifier('gausian_blur')">Gaussian Blur</a>
+                        <button title="Applies gaussian blur to the object" onclick="window.toggleModifier('gaussian_blur')">Gaussian Blur</button>
                     </li>
                     <li>
-                        <button title="Applies emboss to the object" onclick="toggleModifier('emboss')">Emboss</button>
-                    </li>
+                        <button title="Applies emboss to the object" onclick="window.toggleModifier('emboss')">Emboss</button>
+                    </li>-->
                     <li>
-                        <button title="Locks Camera onto object" onclick="toggleModifier('track')">Track</button>
+                        <button title="Locks Camera onto object" onclick="window.toggleModifier('track')">Track</button>
                     </li>
-
                 </ul>
-            </section>-->
+                <script type="module">import { toggleModifier } from "/javascript/webgl.js"; window.toggleModifier = toggleModifier;</script>
+            </section>
         </main>
     </body>
 </html>

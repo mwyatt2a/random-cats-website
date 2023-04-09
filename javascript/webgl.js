@@ -2,7 +2,7 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 
 //Functions and basic setup
-function toggleModifier(option) {
+export function toggleModifier(option) {
     switch (option) {
         case "animate":
             animateOn = !animateOn;
@@ -11,11 +11,10 @@ function toggleModifier(option) {
             gaussian_blurOn = !gaussian_blurOn;
             break;
         case "emboss":
-            embossOn = !embossON;
+            embossOn = !embossOn;
             break;
         case "track":
             trackOn = !trackOn;
-            break;
     }
 }
 
