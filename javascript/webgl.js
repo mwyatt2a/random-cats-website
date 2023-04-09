@@ -8,7 +8,7 @@ export function toggleModifier(option) {
             document.querySelector("#" + option).style = "background-color: grey;";
         }
         else {
-            document.querySelector("#" + option).style = ""
+            document.querySelector("#" + option).style = "background-color: orange;";
         }
     };
     switch (option) {
