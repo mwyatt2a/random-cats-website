@@ -393,18 +393,18 @@ function render() {
         focusz = ztrans;
     }
     else {
-        let loop = 0;
-        let times = 1;
-        let xtrans = 0;
-        let ytrans = 0;
-        let ztrans = -1000;
-        let ztheta = -Math.PI/2;
-        let ytheta = 0;
-        let xtheta = 0;
-        let scale = 1;
-        let focusx = 10
-        let focusy = 10;
-        let focusz = -10;
+        loop = 0;
+        times = 1;
+        xtrans = 0;
+        ytrans = 0;
+        ztrans = -1000;
+        ztheta = -Math.PI/2;
+        ytheta = 0;
+        xtheta = 0;
+        scale = 1;
+        focusx = 10
+        focusy = 10;
+        focusz = -10;
     }
     let aspect = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
