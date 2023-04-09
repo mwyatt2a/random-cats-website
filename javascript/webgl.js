@@ -373,29 +373,39 @@ function render() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     gl.useProgram(program);
-    if (loop >= 30) {
-        loop = 0;
-        times *= -1;
-        cameraLoop++;
+
+    
+    if (animateOn) {
+        if (loop >= 30) {
+            loop = 0;
+            times *= -1;
+        }
+        loop++;
+        xtrans += times*5;
+        ytrans += times*5;
+        ztrans += times*5;
+        ztheta += times*5*2*Math.PI/360;
+        ytheta += times*5*4*Math.PI/360;
+        xtheta += times*5*2*Math.PI/360;
+        scale += -times*0.01;
+        focusx = xtrans;
+        focusy = ytrans;
+        focusz = ztrans;
     }
-    loop++;
-    xtrans += times*5;
-    ytrans += times*5;
-    ztrans += times*5;
-    ztheta += times*5*2*Math.PI/360;
-    ytheta += times*5*4*Math.PI/360;
-    xtheta += times*5*2*Math.PI/360;
-    scale += -times*0.01;
-//    camztheta = 0;
-//    camytheta = 0;
-//    camxtheta = 0;
-    deg += 16*Math.PI/360;
-//    camx = 500*Math.cos(deg);
-//    camy = 0;
-//    camz = -500*Math.sin(deg);
-    focusx = xtrans;
-    focusy = ytrans;
-    focusz = ztrans;
+    else {
+        let loop = 0;
+        let times = 1;
+        let xtrans = 0;
+        let ytrans = 0;
+        let ztrans = -1000;
+        let ztheta = -Math.PI/2;
+        let ytheta = 0;
+        let xtheta = 0;
+        let scale = 1;
+        let focusx = 10
+        let focusy = 10;
+        let focusz = -10;
+    }
     let aspect = canvas.width/canvas.height;
     gl.uniform1i(texImageLocation, unit);
     gl.bindVertexArray(texturedVAO);
@@ -469,11 +479,11 @@ let xtrans = 0;
 let ytrans = 0;
 let ztrans = -1000;
 let ztheta = -Math.PI/2;
-let ytheta = 0//-Math.PI/2;
-let xtheta = 0//-Math.PI/2;
+let ytheta = 0;
+let xtheta = 0;
 let scale = 1;
 let loop = 0;
-let cameraLoop = 0;
+let times = 1;
 let camztheta = 0;
 let camytheta = 0;
 let camxtheta = 0;
@@ -483,8 +493,6 @@ let camz = 0;
 let focusx = 10
 let focusy = 10;
 let focusz = -10;
-let times = 1;
-let deg = 0;
 let ambient = 0.2;
 let diffuse = 0.8;
 let shininess = 500;
