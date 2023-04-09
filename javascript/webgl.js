@@ -3,18 +3,30 @@ import init, { test, Location, Translation, Rotation, GraphicsMatrix } from "/ru
 
 //Functions and basic setup
 export function toggleModifier(option) {
+    let toggleBackground = (on) => {
+        if (on) {
+            document.querySelector("#" + option).style = "background-color: grey;";
+        }
+        else {
+            document.querySelector("#" + option).style = ""
+        }
+    };
     switch (option) {
         case "animate":
             animateOn = !animateOn;
+            toggleBackground(animateOn);
             break;
         case "gaussian_blur":
             gaussian_blurOn = !gaussian_blurOn;
+            toggleBackground(gaussian_blurOn);
             break;
         case "emboss":
             embossOn = !embossOn;
+            toggleBackground(embossOn);
             break;
         case "track":
             trackOn = !trackOn;
+            toggleBackground(trackOn);
     }
 }
 
