@@ -47,44 +47,50 @@ function keyInput(e) {
     switch (e.keyCode) {
         case 81: {
             console.log("q");
-            camy += 100*cameraMatrix[5];
+            camy += 100;
+            /*camy += 100*cameraMatrix[5];
             camx += 100*cameraMatrix[4];
-            camz += 100*cameraMatrix[6];
+            camz += 100*cameraMatrix[6];*/
             break;
         }
         case 87: {
             console.log("w");
-            camz -= 1*cameraMatrix[10];
-            camx -= 1*cameraMatrix[8];
-            camy -= 1*cameraMatrix[9];
+            camz -= 100;
+            /*camz -= 100*cameraMatrix[10];
+            camx -= 100*cameraMatrix[8];
+            camy -= 100*cameraMatrix[9];*/
             break;
         }
         case 69: {
             console.log("e");
-            camy -= 100*cameraMatrix[5];
+            camy -= 100;
+            /*camy -= 100*cameraMatrix[5];
             camx -= 100*cameraMatrix[4];
-            camz -= 100*cameraMatrix[6];
+            camz -= 100*cameraMatrix[6];*/
             break;
         }
         case 65: {
             console.log("a");
-            camx -= 100*cameraMatrix[0];
+            camx -= 100;
+            /*camx -= 100*cameraMatrix[0];
             camy -= 100*cameraMatrix[1];
-            camz -= 100*cameraMatrix[2];
+            camz -= 100*cameraMatrix[2];*/
             break;
         }
         case 83: {
             console.log("s");
-            camz += 100*cameraMatrix[10];
+            camz += 100;
+            /*camz += 100*cameraMatrix[10];
             camx += 100*cameraMatrix[8];
-            camy += 100*cameraMatrix[9];
+            camy += 100*cameraMatrix[9];*/
             break;
         }
         case 68: {
             console.log("d");
-            camx += 100*cameraMatrix[0];
+            camx += 100;
+            /*camx += 100*cameraMatrix[0];
             camy += 100*cameraMatrix[1];
-            camz += 100*cameraMatrix[2];
+            camz += 100*cameraMatrix[2];*/
             break;
         }
         case 37: {
