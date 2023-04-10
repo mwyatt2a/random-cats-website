@@ -416,13 +416,23 @@ function render() {
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, mainTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo1);
-    gl.uniform1fv(kernelLocation, gaussianBlur);
+    if (gaussian_blurOn) {
+        gl.uniform1fv(kernelLocation, gaussianBlur);
+    }
+    else {
+        gl.uniform1fv(kernelLocation, normalKernel);
+    }
     gl.drawArrays(primitiveType, offset, count);
     gl.uniformMatrix4fv(transformationLocation, false, [2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 2/1000, 0, 0, 0, 0, 1]);
     gl.viewport(0, 0, image.width, image.height);
     gl.bindTexture(gl.TEXTURE_2D, backTexture1);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo2);
-    gl.uniform1fv(kernelLocation, emboss);
+    if (embossOn) {
+        gl.uniform1fv(kernelLocation, emboss);
+    }
+    else {
+        gl.uniform1fv(kernelLocation, normalKernel);
+    }
     gl.drawArrays(primitiveType, offset, count);
     let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), trackOn, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
     let modelInverseTranspose = GraphicsMatrix.create_model_inverse_transpose_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
