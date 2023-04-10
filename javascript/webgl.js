@@ -54,9 +54,9 @@ function keyInput(e) {
         }
         case 87: {
             console.log("w");
-            camz -= 100*cameraMatrix[10];
-            camx -= 100*cameraMatrix[8];
-            camy -= 100*cameraMatrix[9];
+            camz -= 1*cameraMatrix[10];
+            camx -= 1*cameraMatrix[8];
+            camy -= 1*cameraMatrix[9];
             break;
         }
         case 69: {
