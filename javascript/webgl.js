@@ -76,12 +76,15 @@ function keyInput(e) {
             camx += 100;
             break;
         }
-        case 37 {
+        case 37: {
             camztheta += 1/(360/(Math.PI*2));
             camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
+            break;
         }
-        case 39 {
+        case 39: {
             camztheta -= 1/(360/(Math.PI*2));
+            camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
+            break;
         }
         default: {
             console.log(e.keyCode);
