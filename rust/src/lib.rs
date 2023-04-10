@@ -171,7 +171,7 @@ impl GraphicsMatrix {
         Self::create_translation_matrix(trans).multiply(&Self::create_rotation_matrix(&thetas)).multiply(&Self::create_scaling_matrix(scale))
     } 
 
-    fn create_camera_matrix(look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location) -> Self {
+    pub fn create_camera_matrix(look_at: bool, cam_thetas: &Rotation, cam_trans: &Translation, focus_loc: &Location) -> Self {
         if !look_at {
             Self::create_model_matrix(1.0, cam_thetas, cam_trans)
         }

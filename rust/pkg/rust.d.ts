@@ -21,6 +21,14 @@ export class GraphicsMatrix {
 */
   static create_model_matrix(scale: number, thetas: Rotation, trans: Translation): GraphicsMatrix;
 /**
+* @param {boolean} look_at
+* @param {Rotation} cam_thetas
+* @param {Translation} cam_trans
+* @param {Location} focus_loc
+* @returns {GraphicsMatrix}
+*/
+  static create_camera_matrix(look_at: boolean, cam_thetas: Rotation, cam_trans: Translation, focus_loc: Location): GraphicsMatrix;
+/**
 * @param {number} scale
 * @param {Rotation} thetas
 * @param {Translation} trans
@@ -90,6 +98,7 @@ export interface InitOutput {
   readonly __wbg_graphicsmatrix_free: (a: number) => void;
   readonly graphicsmatrix_get_data: (a: number, b: number) => void;
   readonly graphicsmatrix_create_model_matrix: (a: number, b: number, c: number) => number;
+  readonly graphicsmatrix_create_camera_matrix: (a: number, b: number, c: number, d: number) => number;
   readonly graphicsmatrix_create_model_inverse_transpose_matrix: (a: number, b: number, c: number) => number;
   readonly graphicsmatrix_create_model_view_projection_matrix: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => number;
   readonly translation_js_create: (a: number, b: number, c: number) => number;

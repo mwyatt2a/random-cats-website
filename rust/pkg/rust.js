@@ -112,6 +112,20 @@ export class GraphicsMatrix {
         return GraphicsMatrix.__wrap(ret);
     }
     /**
+    * @param {boolean} look_at
+    * @param {Rotation} cam_thetas
+    * @param {Translation} cam_trans
+    * @param {Location} focus_loc
+    * @returns {GraphicsMatrix}
+    */
+    static create_camera_matrix(look_at, cam_thetas, cam_trans, focus_loc) {
+        _assertClass(cam_thetas, Rotation);
+        _assertClass(cam_trans, Translation);
+        _assertClass(focus_loc, Location);
+        const ret = wasm.graphicsmatrix_create_camera_matrix(look_at, cam_thetas.ptr, cam_trans.ptr, focus_loc.ptr);
+        return GraphicsMatrix.__wrap(ret);
+    }
+    /**
     * @param {number} scale
     * @param {Rotation} thetas
     * @param {Translation} trans
