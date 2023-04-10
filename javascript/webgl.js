@@ -78,13 +78,13 @@ function keyInput(e) {
         case 37: {
             console.log("left");
             camztheta += 10/(360/(Math.PI*2));
-            camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
+            //camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
             break;
         }
         case 39: {
             console.log("right");
             camztheta -= 10/(360/(Math.PI*2));
-            camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
+            //camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
             break;
         }
         default: {
