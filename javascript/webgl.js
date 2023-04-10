@@ -40,8 +40,9 @@ const gl = canvas.getContext("webgl2");
 if (gl == null) {
     document.querySelector("h2").innerHTML = "WebGL is not supported by your browers. Cannot Render Animation.";
 }
-window.addEventListener("keydown", keyInput);
-//canvas.addEventListener("mousemove", rotateCamera);
+let canvaswrapper = document.getElementById("canvaswrapper");
+canvaswrapper.addEventListener("keydown", keyInput);
+canvas.addEventListener("mousemove", rotateCamera);
 
 function keyInput(e) {
     switch (e.keyCode) {
@@ -75,6 +76,13 @@ function keyInput(e) {
             camx += 100;
             break;
         }
+        case 37 {
+            camztheta += 1/(360/(Math.PI*2));
+            camztheta = Math.max(Math.abs(camztheta % -70/(360/(Math.PI*2))), camztheta % 70/(360/(Math.PI*2)));
+        }
+        case 39 {
+            camztheta -= 1/(360/(Math.PI*2));
+        }
         default: {
             console.log(e.keyCode);
         }
@@ -82,7 +90,8 @@ function keyInput(e) {
 }
 
 function rotateCamera(e) {
-    console.log(e.movementX);
+    camytheta -= e.movementX/(360/(Math.PI*2));
+    camxtheta -= e.movementY/(360/(Math.PI*2));
 }
 
 //Shaders and their setup
