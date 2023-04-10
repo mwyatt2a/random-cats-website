@@ -56,6 +56,7 @@ function keyInput(e) {
         case 87: {
             console.log("w");
             camz -= 100;
+            console.log(100*cameraMatrix[10]);
             /*camz -= 100*cameraMatrix[10];
             camx -= 100*cameraMatrix[8];
             camy -= 100*cameraMatrix[9];*/
