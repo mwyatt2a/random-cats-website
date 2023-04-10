@@ -40,8 +40,7 @@ const gl = canvas.getContext("webgl2");
 if (gl == null) {
     document.querySelector("h2").innerHTML = "WebGL is not supported by your browers. Cannot Render Animation.";
 }
-const canvaswrapper = document.getElementById("canvaswrapper");
-canvaswrapper.addEventListener("keydown", keyInput);
+canvas.addEventListener("keydown", keyInput);
 canvas.addEventListener("mousemove", rotateCamera);
 
 function keyInput(e) {
