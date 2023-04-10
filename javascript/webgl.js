@@ -510,7 +510,7 @@ function render() {
 
 
 //Main Code
-cameraMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+let cameraMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 let animateOn = false;
 let gaussian_blurOn = false;
 let embossOn = false;
