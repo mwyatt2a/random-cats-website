@@ -82,7 +82,7 @@ function keyInput(e) {
 }
 
 function rotateCamera(e) {
-    console.log(movementX);
+    console.log(e.movementX);
 }
 
 //Shaders and their setup
