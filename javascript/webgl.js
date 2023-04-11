@@ -426,7 +426,7 @@ function render() {
         times = 1;
         xtrans = 0;
         ytrans = 0;
-        ztrans = -1000;
+        ztrans = -2000;
         ztheta = -Math.PI/2;
         ytheta = 0;
         xtheta = 0;
@@ -463,7 +463,7 @@ function render() {
         gl.uniform1fv(kernelLocation, normalKernel);
     }
     gl.drawArrays(primitiveType, offset, count);
-    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), trackOn, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 2000).get_data();
+    let transformationMatrix = GraphicsMatrix.create_model_view_projection_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans), trackOn, Rotation.js_create(camztheta, camytheta, camxtheta), Translation.js_create(camx, camy, camz), Location.js_create(focusx, focusy, focusz), aspect, Math.PI/3, 10, 4000).get_data();
     let modelInverseTranspose = GraphicsMatrix.create_model_inverse_transpose_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     let model = GraphicsMatrix.create_model_matrix(scale, Rotation.js_create(ztheta, ytheta, xtheta), Translation.js_create(xtrans, ytrans, ztrans)).get_data();
     gl.uniformMatrix4fv(transformationLocation, false, transformationMatrix);
@@ -517,7 +517,7 @@ let embossOn = false;
 let trackOn = false;
 let xtrans = 0;
 let ytrans = 0;
-let ztrans = -1000;
+let ztrans = -2000;
 let ztheta = -Math.PI/2;
 let ytheta = 0;
 let xtheta = 0;
