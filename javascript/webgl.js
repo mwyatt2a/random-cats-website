@@ -426,7 +426,7 @@ function render() {
         times = 1;
         xtrans = 0;
         ytrans = 0;
-        ztrans = -2000;
+        ztrans = -1000;
         ztheta = -Math.PI/2;
         ytheta = 0;
         xtheta = 0;
@@ -517,7 +517,7 @@ let embossOn = false;
 let trackOn = false;
 let xtrans = 0;
 let ytrans = 0;
-let ztrans = -2000;
+let ztrans = -1000;
 let ztheta = -Math.PI/2;
 let ytheta = 0;
 let xtheta = 0;
